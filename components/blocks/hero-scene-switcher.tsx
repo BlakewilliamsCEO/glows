@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { heroSolutions, site } from "@/lib/config";
@@ -44,24 +43,17 @@ export function HeroSceneSwitcher() {
 
   return (
     <section className="dark relative isolate min-h-[42rem] w-full overflow-hidden bg-[#141C2F] lg:min-h-[46rem]">
-      {/* ---------- scenes ---------- */}
+      {/* ---------- background video ---------- */}
       <div className="absolute inset-0 -z-10">
-        {heroSolutions.map((solution, i) => (
-          <Image
-            key={solution.slug}
-            src={solution.scene.src}
-            alt={solution.scene.alt}
-            fill
-            // First scene is LCP; the rest preload so switching never flashes.
-            priority={i === 0}
-            loading={i === 0 ? "eager" : undefined}
-            sizes="100vw"
-            className={cn(
-              "object-cover transition-opacity duration-700 ease-out",
-              i === active ? "opacity-100" : "opacity-0",
-            )}
-          />
-        ))}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
 
         {/* Legibility scrim. Heavier at the bottom where the tabs sit. */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#141C2F] via-[#141C2F]/55 to-[#141C2F]/75" />
