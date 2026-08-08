@@ -1,0 +1,181 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------
+   Glow's Lighting Services — token layer
+   Brand: navy #1E2A48 · gold #E7B969 · cream #F1EDE8
+   Light = daytime, the install is invisible.
+   Dark  = nighttime, the product is the whole point.
+   --------------------------------------------------------------- */
+
+:root {
+  --radius: 0.375rem;
+
+  /* brand primitives — the only hardcoded brand values in the system */
+  --brand-navy: #1e2a48;
+  --brand-gold: #e7b969;
+  --brand-cream: #f1ede8;
+
+  --background: #f1ede8;
+  --foreground: #1e2a48;
+
+  --card: #faf8f5;
+  --card-foreground: #1e2a48;
+
+  --popover: #faf8f5;
+  --popover-foreground: #1e2a48;
+
+  --primary: #1e2a48;
+  --primary-foreground: #f1ede8;
+
+  --secondary: #e4ded6;
+  --secondary-foreground: #1e2a48;
+
+  --muted: #e4ded6;
+  --muted-foreground: #5a6478;
+
+  --accent: #e7b969;
+  --accent-foreground: #1e2a48;
+
+  --destructive: #b3261e;
+  --destructive-foreground: #f1ede8;
+
+  --border: #dad2c7;
+  --input: #dad2c7;
+  --ring: #e7b969;
+
+  --chart-1: #1e2a48;
+  --chart-2: #e7b969;
+  --chart-3: #5a6478;
+  --chart-4: #b08a3e;
+  --chart-5: #8a94aa;
+}
+
+.dark {
+  /* deeper than brand navy so navy can act as an elevated surface */
+  --background: #141c2f;
+  --foreground: #f1ede8;
+
+  --card: #1e2a48;
+  --card-foreground: #f1ede8;
+
+  --popover: #1e2a48;
+  --popover-foreground: #f1ede8;
+
+  /* gold leads at night — this is the product on */
+  --primary: #e7b969;
+  --primary-foreground: #1e2a48;
+
+  --secondary: #2a3757;
+  --secondary-foreground: #f1ede8;
+
+  --muted: #2a3757;
+  --muted-foreground: #9aa4bb;
+
+  --accent: #e7b969;
+  --accent-foreground: #1e2a48;
+
+  --destructive: #e5484d;
+  --destructive-foreground: #141c2f;
+
+  --border: #354262;
+  --input: #354262;
+  --ring: #e7b969;
+
+  --chart-1: #e7b969;
+  --chart-2: #f1ede8;
+  --chart-3: #9aa4bb;
+  --chart-4: #b08a3e;
+  --chart-5: #5a6478;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-cream: var(--brand-cream);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-inter);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/40;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04";
+  }
+
+  /* Display face runs expanded and tight — signage register, not editorial. */
+  .font-display {
+    font-family: var(--font-display);
+    font-variation-settings: "wdth" 118;
+    letter-spacing: -0.02em;
+  }
+
+  h1, h2, h3 {
+    @apply font-display font-semibold text-balance;
+  }
+
+  h1 { @apply text-4xl sm:text-5xl lg:text-6xl leading-[1.05]; }
+  h2 { @apply text-3xl sm:text-4xl lg:text-5xl leading-[1.1]; }
+  h3 { @apply text-xl sm:text-2xl leading-snug; }
+
+  p { @apply text-pretty; }
+
+  /* Footage, pricing, phone numbers — align in columns from day one. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Eyebrow labels: small caps, gold, wide. Used above section headings. */
+  .eyebrow {
+    @apply font-display text-xs font-semibold uppercase tracking-[0.18em];
+    color: var(--brand-gold);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
