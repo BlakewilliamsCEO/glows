@@ -42,7 +42,7 @@ export function HeroSceneSwitcher() {
   );
 
   return (
-    <section className="dark relative isolate min-h-[42rem] w-full overflow-hidden bg-[#141C2F] lg:min-h-[46rem]">
+    <section className="dark relative isolate min-h-[42rem] w-full overflow-hidden lg:min-h-[46rem]">
       {/* ---------- background video ---------- */}
       <div className="absolute inset-0 -z-10">
         <video
@@ -55,8 +55,8 @@ export function HeroSceneSwitcher() {
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
 
-        {/* Legibility scrim. Heavier at the bottom where the tabs sit. */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141C2F] via-[#141C2F]/55 to-[#141C2F]/75" />
+        {/* Legibility scrim. Heavy at the bottom for text, light at the top. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141C2F]/90 via-[#141C2F]/30 to-[#141C2F]/10" />
       </div>
 
       {/* ---------- copy ---------- */}
