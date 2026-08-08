@@ -89,7 +89,7 @@ export function SiteFooter() {
             links={[
               { label: "About", href: "/about" },
               { label: "Gallery", href: "/gallery" },
-              { label: "Book free measure", href: site.ctaHref },
+              { label: site.cta, href: site.ctaHref },
             ]}
           />
         </div>

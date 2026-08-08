@@ -39,7 +39,7 @@ export function ServiceArea() {
             <p className="eyebrow">Where we work</p>
             <h2 className="mt-4 text-brand-cream">{site.serviceArea}.</h2>
             <p className="mt-5 text-base text-brand-cream/70 lg:text-lg">
-              We install across {counties.join(" and ")}. If you&rsquo;re just
+              We install across {new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(counties)}. If you&rsquo;re just
               outside the line, call anyway — we schedule around the map more
               often than not.
             </p>

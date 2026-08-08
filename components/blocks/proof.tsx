@@ -39,14 +39,11 @@ export function Proof() {
         <dl className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
           {systemStats.map((stat) => (
             <div key={stat.label} className="bg-card px-7 py-8">
-              <dt className="sr-only">{stat.label}</dt>
-              <dd>
-                <span className="tabular font-display block text-3xl font-semibold text-foreground lg:text-4xl">
-                  {stat.value}
-                </span>
-                <span className="mt-2 block text-sm text-muted-foreground">
-                  {stat.label}
-                </span>
+              <dt className="tabular font-display block text-3xl font-semibold text-foreground lg:text-4xl">
+                {stat.value}
+              </dt>
+              <dd className="mt-2 text-sm text-muted-foreground">
+                {stat.label}
               </dd>
             </div>
           ))}
