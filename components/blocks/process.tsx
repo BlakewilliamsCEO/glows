@@ -1,32 +1,24 @@
 import Link from "next/link";
+import { Ruler, PenLine, Zap } from "lucide-react";
 import { site } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 
-/**
- * C8 — Process.
- *
- * Numbered here, unlike C6, because this genuinely is a sequence: the
- * measure has to happen before the design, and the design before the
- * install. The numbers carry information the reader needs.
- *
- * Three steps, not five. Every step listed is a step the customer has to
- * imagine themselves getting through, so padding this out costs conversions.
- */
-
-const STEPS: { n: string; title: string; body: string; note?: boolean }[] = [
+const STEPS = [
   {
     n: "01",
+    icon: Ruler,
     title: "Free measure",
     body: "We come out, walk the property, and measure the roofline. You get a fixed number, not a range — pricing is by the linear foot, so there's nothing to guess at.",
-    note: true,
   },
   {
     n: "02",
+    icon: PenLine,
     title: "Design",
     body: "We map the runs, the zones, and where the track disappears into your trim. You see the plan before anyone gets on a ladder.",
   },
   {
     n: "03",
+    icon: Zap,
     title: "Install",
     body: "One day, one crew. We set up the app with you before we leave, and the ladder goes back on our truck for good.",
   },
@@ -36,31 +28,39 @@ export function Process() {
   return (
     <section className="bg-background py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+        <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">How it works</p>
           <h2 className="mt-4 text-foreground">Three steps, then never again.</h2>
+          <p className="mt-5 text-base text-muted-foreground lg:text-lg">
+            The measure is free. The install takes one day. After that, it runs itself.
+          </p>
         </div>
 
-        <ol className="mt-14 grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8 lg:mt-16">
-          {STEPS.map((step) => (
-            <li key={step.n} className="border-t border-border pt-6">
-              <span className="tabular font-display text-sm font-semibold text-accent">
-                {step.n}
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3 lg:mt-16">
+          {STEPS.map(({ n, icon: Icon, title, body }) => (
+            <div
+              key={n}
+              className="card-hover relative flex flex-col rounded-2xl border border-border bg-card p-8"
+            >
+              {/* Step number — large background numeral */}
+              <span className="font-display absolute right-6 top-5 text-6xl font-bold text-accent/10 select-none">
+                {n}
               </span>
-              <h3 className="mt-3 text-foreground">{step.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {step.body}
-              </p>
-              {step.note && (
-                <p className="mt-3 text-sm text-muted-foreground/70">
-                  {site.qualifier}.
-                </p>
-              )}
-            </li>
-          ))}
-        </ol>
 
-        <div className="mt-12">
+              {/* Icon */}
+              <span className="flex size-12 items-center justify-center rounded-xl border border-accent/30 bg-accent/10">
+                <Icon className="size-5 text-accent" aria-hidden />
+              </span>
+
+              <h3 className="mt-6 text-foreground">{title}</h3>
+              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                {body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
           <Button asChild size="lg">
             <Link href={site.ctaHref}>{site.cta}</Link>
           </Button>

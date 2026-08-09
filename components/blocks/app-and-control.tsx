@@ -88,21 +88,30 @@ export function AppAndControl() {
               programmed.
             </p>
 
-            <dl className="mt-10 grid grid-cols-1 gap-x-8 gap-y-7 sm:grid-cols-2">
-              {FEATURES.map(({ icon: Icon, title, body }) => (
-                <div key={title}>
-                  <dt className="flex items-center gap-2.5">
-                    <Icon className="size-4 text-brand-gold" aria-hidden />
-                    <span className="font-display text-sm font-semibold text-brand-cream">
+            {/* Bento grid — 2+1, 1+2 pattern */}
+            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {FEATURES.map(({ icon: Icon, title, body }, i) => {
+                // cards 0 and 4 span 2 cols (wide), rest are 1 col
+                const wide = i === 0 || i === 4;
+                return (
+                  <div
+                    key={title}
+                    className={cn(
+                      "flex flex-col rounded-xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-brand-gold/30 hover:bg-white/[0.07]",
+                      wide ? "col-span-2 sm:col-span-2" : "col-span-1",
+                    )}
+                  >
+                    <Icon className="size-5 text-brand-gold" aria-hidden />
+                    <p className="mt-3 font-display text-sm font-semibold text-brand-cream">
                       {title}
-                    </span>
-                  </dt>
-                  <dd className="mt-1.5 text-sm leading-relaxed text-brand-cream/60">
-                    {body}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-brand-cream/55">
+                      {body}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">

@@ -2,9 +2,17 @@
 
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
-import { heroSolutions, site } from "@/lib/config";
+import { heroSolutions, site, systemStats } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/utils";
+
+/** "800+" → { value: 800, suffix: "+" } · "16M+" → { value: 16, suffix: "M+" } */
+function parseStat(raw: string): { value: number; suffix: string } {
+  const match = raw.match(/^([\d.]+)(.*)$/);
+  if (!match) return { value: 0, suffix: raw };
+  return { value: parseFloat(match[1]), suffix: match[2] };
+}
 
 /**
  * C2 — Hero scene switcher.
@@ -97,43 +105,24 @@ export function HeroSceneSwitcher() {
           </div>
         </div>
 
-        {/* ---------- scene switcher ---------- */}
-        <div className="mt-12 lg:mt-16">
-          <p className="mb-3 text-xs uppercase tracking-[0.18em] text-brand-cream/40">
-            Same house — pick the night
-          </p>
-
-          <div
-            role="tablist"
-            aria-label="Lighting scenes"
-            onKeyDown={onKeyDown}
-            className="-mx-6 flex gap-1 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:gap-2 sm:px-0"
-          >
-            {heroSolutions.map((solution, i) => {
-              const isActive = i === active;
+        {/* ---------- stats bar ---------- */}
+        <div className="mt-12 lg:mt-16 border-t border-white/10 pt-8">
+          <dl className="flex flex-wrap gap-x-12 gap-y-6 sm:gap-x-16">
+            {systemStats.map((stat) => {
+              const { value, suffix } = parseStat(stat.value);
               return (
-                <button
-                  key={solution.slug}
-                  ref={(el) => {
-                    tabRefs.current[i] = el;
-                  }}
-                  role="tab"
-                  id={`scene-tab-${solution.slug}`}
-                  aria-selected={isActive}
-                  tabIndex={isActive ? 0 : -1}
-                  onClick={() => setActive(i)}
-                  className={cn(
-                    "font-display relative shrink-0 border-b-2 px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors sm:px-6 sm:text-base",
-                    isActive
-                      ? "border-brand-gold text-brand-cream"
-                      : "border-white/15 text-brand-cream/50 hover:border-white/40 hover:text-brand-cream/80",
-                  )}
-                >
-                  {solution.short}
-                </button>
+                <div key={stat.label}>
+                  <dt className="font-display text-3xl font-semibold text-brand-cream lg:text-4xl">
+                    <CountUp to={value} duration={2} className="tabular-nums" />
+                    {suffix}
+                  </dt>
+                  <dd className="mt-1 text-xs text-brand-cream/50 uppercase tracking-[0.12em]">
+                    {stat.label}
+                  </dd>
+                </div>
               );
             })}
-          </div>
+          </dl>
         </div>
       </div>
     </section>

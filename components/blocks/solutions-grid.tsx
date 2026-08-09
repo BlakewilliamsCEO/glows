@@ -1,26 +1,27 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { solutions } from "@/lib/config";
+import { CarouselStacked } from "@/components/ui/carousel-stacked";
+
+const slides = solutions.map((s) => ({
+  image: s.scene.src,
+  alt: s.scene.alt,
+  title: s.name,
+  description: s.blurb,
+  badge: s.short,
+  href: `/solutions/${s.slug}`,
+}));
 
 /**
- * C3 — Solutions grid.
+ * C3 — Solutions carousel.
  *
- * The hero switcher shows four scenes; this section completes the set
- * (landscape, commercial) and is the routing layer into /solutions/[slug].
- *
- * Deliberately quiet. The hero is the signature element — this is a
- * disciplined grid that gets out of its way. Server component: no state,
- * no client JS.
- *
- * Cream background on purpose. The night photography carries more weight
- * against light than it does stacked under another dark section.
+ * Replaced static grid with a stacked drag-carousel so each scene gets
+ * full visual weight. The same six solutions, now with depth and motion.
  */
 export function SolutionsGrid() {
   return (
     <section className="bg-background py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+        <div className="reveal max-w-2xl">
           <p className="eyebrow">What you&rsquo;re buying</p>
           <h2 className="mt-4 text-foreground">
             One system. Every reason you&rsquo;d want it.
@@ -31,36 +32,19 @@ export function SolutionsGrid() {
           </p>
         </div>
 
-        <ul className="mt-14 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
-          {solutions.map((solution) => (
-            <li key={solution.slug}>
+        <div className="mt-16 lg:mt-20">
+          <CarouselStacked slides={slides} />
+        </div>
+
+        {/* Solution link strip below carousel */}
+        <ul className="mt-16 flex flex-wrap justify-center gap-3">
+          {solutions.map((s) => (
+            <li key={s.slug}>
               <Link
-                href={`/solutions/${solution.slug}`}
-                className="group block rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+                href={`/solutions/${s.slug}`}
+                className="inline-flex items-center rounded-full border border-border px-4 py-1.5 text-sm text-muted-foreground transition-colors hover:border-accent hover:text-accent"
               >
-                <div className="relative aspect-4/3 overflow-hidden rounded-lg bg-muted">
-                  <Image
-                    src={solution.scene.src}
-                    alt={solution.scene.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
-
-                <div className="mt-5 flex items-start justify-between gap-4">
-                  <h3 className="font-display text-lg font-semibold text-foreground lg:text-xl">
-                    {solution.name}
-                  </h3>
-                  <ArrowUpRight
-                    className="mt-1 size-5 shrink-0 text-muted-foreground transition-colors group-hover:text-accent"
-                    aria-hidden
-                  />
-                </div>
-
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {solution.blurb}
-                </p>
+                {s.short}
               </Link>
             </li>
           ))}

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Archivo, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
-const archivo = Archivo({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-archivo",
-  axes: ["wdth"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -30,8 +31,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${inter.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
+      <body>
+        <ScrollReveal />
+        {children}
+      </body>
     </html>
   );
 }

@@ -9,6 +9,10 @@ import { Process } from "@/components/blocks/process";
 import { ServiceArea } from "@/components/blocks/service-area";
 import { Proof } from "@/components/blocks/proof";
 import { SiteFooter } from "@/components/blocks/site-footer";
+import { SectionDivider } from "@/components/section-divider";
+
+const DARK = "#141C2F";
+const CREAM = "#F1EDE8";
 
 export default function HomePage() {
   return (
@@ -16,17 +20,29 @@ export default function HomePage() {
       <SiteHeader />
       <main>
         <HeroSceneSwitcher />
+        <SectionDivider bg={DARK} fill={CREAM} />
+
         <SolutionsGrid />
+        <SectionDivider bg={CREAM} fill={DARK} />
 
         <DiscreetFromStreet />
         <AppAndControl />
+        <SectionDivider bg={DARK} fill={CREAM} flip />
+
         <RecurringCost />
+        <SectionDivider bg={CREAM} fill={DARK} />
+
         <SpecBlock />
+        <SectionDivider bg={DARK} fill={CREAM} flip />
+
         <Process />
+        <SectionDivider bg={CREAM} fill={DARK} />
+
         <ServiceArea />
+        <SectionDivider bg={DARK} fill={CREAM} flip />
+
         <Proof />
-        {/* C11 FAQ — deferred */}
-        {/* C12 Quote form */}
+        <SectionDivider bg={CREAM} fill={DARK} />
       </main>
       <SiteFooter />
     </>
