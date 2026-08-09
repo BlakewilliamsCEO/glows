@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  output: "export",
-  images: { unoptimized: true },
-  trailingSlash: true,
-  env: {
-    NEXT_PUBLIC_BASE_PATH: "",
-  },
+  // Server mode — deployed on Railway, not static export
 };
 
 export default config;
