@@ -33,7 +33,7 @@ export function ServiceArea() {
   return (
     <section className="dark bg-[#141C2F] py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16">
+        <div className="reveal grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16">
           {/* ---------- copy + map ---------- */}
           <div className="lg:col-span-5">
             <p className="eyebrow">Where we work</p>

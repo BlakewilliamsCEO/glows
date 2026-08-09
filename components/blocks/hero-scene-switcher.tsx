@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { heroSolutions, site, systemStats } from "@/lib/config";
-import { Button } from "@/components/ui/button";
+import { SmokyButton } from "@/components/ui/smoky-button";
 import { CountUp } from "@/components/ui/count-up";
 import { cn } from "@/lib/utils";
 
@@ -50,9 +50,9 @@ export function HeroSceneSwitcher() {
   );
 
   return (
-    <section className="dark relative isolate min-h-[42rem] w-full overflow-hidden lg:min-h-[46rem]">
+    <section className="dark relative isolate min-h-[42rem] w-full lg:min-h-[46rem]">
       {/* ---------- background video ---------- */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-x-0 top-0 -bottom-[60px] -z-10">
         <video
           autoPlay
           loop
@@ -70,11 +70,7 @@ export function HeroSceneSwitcher() {
       {/* ---------- copy ---------- */}
       <div className="mx-auto flex min-h-[42rem] max-w-7xl flex-col justify-end px-6 pb-8 pt-32 lg:min-h-[46rem] lg:pb-12">
         <div className="max-w-2xl">
-          <p className="eyebrow">
-            {site.serviceArea} &middot; {site.qualifier}
-          </p>
-
-          <h1 className="mt-4 text-brand-cream">
+          <h1 className="text-brand-cream">
             One install.
             <br />
             Every night after.
@@ -88,25 +84,19 @@ export function HeroSceneSwitcher() {
             {heroSolutions[active].blurb}
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href={site.ctaHref}>{site.cta}</Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/25 text-brand-cream hover:border-brand-gold hover:bg-transparent hover:text-brand-gold"
-            >
-              <Link href={`/solutions/${heroSolutions[active].slug}`}>
-                About {heroSolutions[active].short.toLowerCase()} lighting
-              </Link>
-            </Button>
+          <div className="mt-8">
+            <Link href={site.ctaHref} tabIndex={-1}>
+              <SmokyButton>{site.cta}</SmokyButton>
+            </Link>
           </div>
         </div>
 
         {/* ---------- stats bar ---------- */}
-        <div className="mt-12 lg:mt-16 border-t border-white/10 pt-8">
+        <div className="mt-12 lg:mt-16">
+          <p className="mb-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-brand-cream/40">
+            Now serving: {site.serviceArea} &middot; {site.qualifier}
+          </p>
+          <div className="border-t border-white/10 pt-8">
           <dl className="flex flex-wrap gap-x-12 gap-y-6 sm:gap-x-16">
             {systemStats.map((stat) => {
               const { value, suffix } = parseStat(stat.value);
@@ -123,8 +113,10 @@ export function HeroSceneSwitcher() {
               );
             })}
           </dl>
+          </div>
         </div>
       </div>
+
     </section>
   );
 }

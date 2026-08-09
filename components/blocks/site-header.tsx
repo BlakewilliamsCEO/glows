@@ -76,12 +76,13 @@ export function SiteHeader() {
         )}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:h-20">
-          <Link
-            href="/"
-            className="font-display text-lg font-semibold tracking-tight text-brand-cream lg:text-xl"
-          >
-            Glow&rsquo;s
-            <span className="text-brand-gold">.</span>
+          <Link href="/" className="group flex flex-col leading-none">
+            <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream transition-colors group-hover:text-brand-cream lg:text-3xl">
+              Glows<span className="text-brand-gold not-italic">.</span>
+            </span>
+            <span className="hidden text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40 transition-colors group-hover:text-brand-gold/60 lg:block">
+              Permanent Lighting
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex">
@@ -132,8 +133,13 @@ export function SiteHeader() {
         aria-hidden={!open}
       >
         <div className="flex h-16 items-center justify-between px-6">
-          <span className="font-display text-lg font-semibold text-brand-cream">
-            Glow&rsquo;s<span className="text-brand-gold">.</span>
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream">
+              Glows<span className="text-brand-gold not-italic">.</span>
+            </span>
+            <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40">
+              Permanent Lighting
+            </span>
           </span>
           <button
             type="button"

@@ -30,9 +30,14 @@ export function SiteFooter() {
         {/* ---------- columns ---------- */}
         <div className="mt-16 grid grid-cols-2 gap-x-8 gap-y-12 border-t border-white/10 pt-12 lg:grid-cols-4">
           <div className="col-span-2 lg:col-span-1">
-            <p className="font-display text-lg font-semibold text-brand-cream">
-              Glow&rsquo;s<span className="text-brand-gold">.</span>
-            </p>
+            <div className="flex flex-col leading-none">
+              <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream">
+                Glows<span className="text-brand-gold not-italic">.</span>
+              </span>
+              <span className="mt-1 text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40">
+                Permanent Lighting
+              </span>
+            </div>
             <p className="mt-3 text-sm text-brand-cream/50">
               {site.serviceArea}
             </p>

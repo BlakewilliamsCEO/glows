@@ -62,7 +62,7 @@ export const solutions: Solution[] = [
       "Warm white on the peaks, columns, and gables. This is what the house looks like every ordinary Tuesday.",
     hero: true,
     scene: {
-      src: "/scenes/accent.jpg",
+      src: "/scenes/accent.mp4",
       alt: "Home at night lit in warm white along the roofline and columns",
     },
   },

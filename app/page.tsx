@@ -20,7 +20,7 @@ export default function HomePage() {
       <SiteHeader />
       <main>
         <HeroSceneSwitcher />
-        <SectionDivider bg={DARK} fill={CREAM} />
+        <SectionDivider bg="transparent" fill={CREAM} />
 
         <SolutionsGrid />
         <SectionDivider bg={CREAM} fill={DARK} />

@@ -201,6 +201,62 @@ html {
 }
 
 
+/* ---------------------------------------------------------------
+   Smoky CTA button — WebGL canvas fills the button background.
+   Falls back to a solid gold button when WebGL is unavailable
+   or prefers-reduced-motion is set.
+   --------------------------------------------------------------- */
+.smoky-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.25rem;
+  min-width: 13rem;
+  padding: 0 2.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  background: #E7B969; /* CSS fallback */
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.smoky-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px -4px rgba(231, 185, 105, 0.55);
+}
+
+.smoky-btn:active {
+  transform: translateY(0);
+}
+
+.smoky-btn:focus-visible {
+  outline: 2px solid #E7B969;
+  outline-offset: 3px;
+}
+
+.smoky-btn__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.smoky-btn__label {
+  position: relative;
+  z-index: 1;
+  color: #0E1424;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

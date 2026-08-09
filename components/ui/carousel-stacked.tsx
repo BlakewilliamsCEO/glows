@@ -115,12 +115,23 @@ function Card({ slide, index, total, progress, config }: CardProps) {
         "w-52 h-64 sm:w-64 sm:h-80 lg:w-72 lg:h-[26rem]",
       )}
     >
-      {/* Scene image */}
-      <img
-        src={slide.image}
-        alt={slide.alt}
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-      />
+      {/* Scene media — video or image */}
+      {slide.image.endsWith(".mp4") ? (
+        <video
+          src={slide.image}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+      ) : (
+        <img
+          src={slide.image}
+          alt={slide.alt}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
+      )}
 
       {/* Depth overlay darkens side cards */}
       <motion.div
