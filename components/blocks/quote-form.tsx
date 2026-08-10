@@ -65,6 +65,7 @@ export function QuoteForm() {
       notes: String(data.get("notes") ?? ""),
       coverage: String(data.get("coverage") ?? ""),
       stories: String(data.get("stories") ?? ""),
+      structures: String(data.get("structures") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
@@ -180,6 +181,13 @@ export function QuoteForm() {
           ))}
         </div>
       </div>
+
+      {/* Detached structures */}
+      <input
+        name="structures"
+        placeholder="Other structures? Pool house, extra garage, pergola…"
+        className={f}
+      />
 
       {/* What are you lighting */}
       <div>

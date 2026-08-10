@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS prospects (
   interests     TEXT[],
   coverage      TEXT,
   stories       TEXT,
+  structures    TEXT,
   timeline      TEXT,
   hear_about    TEXT,
   notes         TEXT,

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       `INSERT INTO prospects (
         first_name, last_name, phone, email,
         street, city, zip, home_value,
-        interests, coverage, stories, timeline, hear_about, notes, sms_consent,
+        interests, coverage, stories, structures, timeline, hear_about, notes, sms_consent,
         fbclid, fbc, fbp, event_id,
         gclid, ttclid, msclkid,
         utm_source, utm_medium, utm_campaign, utm_content, utm_term,
@@ -19,11 +19,11 @@ export async function POST(req: NextRequest) {
       ) VALUES (
         $1,$2,$3,$4,
         $5,$6,$7,$8,
-        $9,$10,$11,$12,$13,$14,$15,
-        $16,$17,$18,$19,
-        $20,$21,$22,
-        $23,$24,$25,$26,$27,
-        $28,$29
+        $9,$10,$11,$12,$13,$14,$15,$16,
+        $17,$18,$19,$20,
+        $21,$22,$23,
+        $24,$25,$26,$27,$28,
+        $29,$30
       ) RETURNING id, created_at`,
       [
         payload.firstName,
@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
         payload.interests,
         payload.coverage || null,
         payload.stories || null,
+        payload.structures || null,
         payload.timeline || null,
         payload.hearAbout || null,
         payload.notes || null,
