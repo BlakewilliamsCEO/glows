@@ -62,7 +62,7 @@ export function QuoteForm() {
       interests,
       timeline: String(data.get("timeline") ?? ""),
       hearAbout: String(data.get("hearAbout") ?? ""),
-      notes: "",
+      notes: String(data.get("notes") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
@@ -112,8 +112,8 @@ export function QuoteForm() {
         />
       </div>
 
-      {/* Row 2: Email / Street / ZIP */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Row 2: Email / Street */}
+      <div className="grid grid-cols-2 gap-3">
         <input
           name="email" type="email" required autoComplete="email"
           placeholder="Email" className={f}
@@ -122,6 +122,14 @@ export function QuoteForm() {
         <input
           name="street" required autoComplete="street-address"
           placeholder="Street address" className={f}
+        />
+      </div>
+
+      {/* Row 3: City / ZIP */}
+      <div className="grid grid-cols-2 gap-3">
+        <input
+          name="city" required autoComplete="address-level2"
+          placeholder="City" className={f}
         />
         <input
           name="zip" required inputMode="numeric" autoComplete="postal-code"
@@ -191,6 +199,14 @@ export function QuoteForm() {
           Text me about my quote. Msg &amp; data rates may apply. Not a condition of purchase.
         </span>
       </label>
+
+      {/* Notes */}
+      <textarea
+        name="notes"
+        rows={1}
+        placeholder="Anything else? Gate code, HOA, dogs, roof access."
+        className={`${f} h-auto py-2 leading-relaxed`}
+      />
 
       {status === "error" && <p className="text-sm text-red-400">{error}</p>}
 

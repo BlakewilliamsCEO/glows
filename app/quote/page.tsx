@@ -31,8 +31,8 @@ export default function QuotePage() {
         </div>
 
         {/* ---------- form — right half ---------- */}
-        <div className="w-full lg:w-1/2 px-6 pt-24 pb-10 sm:px-10 lg:px-14 lg:pt-28">
-          <div className="mx-auto max-w-xl">
+        <div className="w-full lg:w-1/2 px-6 pt-20 pb-6 sm:px-8 lg:px-10 lg:pt-24">
+          <div className="mx-auto max-w-2xl">
 
             <h1 className="text-brand-cream">Get a quote.</h1>
             <a
