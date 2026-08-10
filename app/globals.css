@@ -292,6 +292,11 @@ html {
   animation-play-state: paused;
 }
 
+@keyframes glow-fade-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

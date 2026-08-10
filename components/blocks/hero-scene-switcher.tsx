@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import { heroSolutions, site, systemStats } from "@/lib/config";
 import { SmokyButton } from "@/components/ui/smoky-button";
 import { CountUp } from "@/components/ui/count-up";
+import { GlowText } from "@/components/ui/glow-text";
 import { cn } from "@/lib/utils";
 
 /** "800+" → { value: 800, suffix: "+" } · "16M+" → { value: 16, suffix: "M+" } */
@@ -73,7 +74,7 @@ export function HeroSceneSwitcher() {
           <h1 className="text-brand-cream">
             Turn off your porch light.
             <br />
-            <span className="text-brand-gold">Forever.</span>
+            <span className="text-brand-gold"><GlowText>Forever.</GlowText></span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base text-brand-cream/75 lg:text-lg">

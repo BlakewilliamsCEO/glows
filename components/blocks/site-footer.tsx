@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MessageSquareText, Phone } from "lucide-react";
 import { cities, primarySystem, site, solutions } from "@/lib/config";
+import { GlowText } from "@/components/ui/glow-text";
 
 /**
  * C13 — Footer.
@@ -24,7 +25,7 @@ export function SiteFooter() {
         {/* ---------- sign-off ---------- */}
         <p className="font-display max-w-3xl text-3xl leading-[1.1] font-semibold italic text-brand-cream sm:text-4xl lg:text-5xl">
           Turn off your porch light.
-          <span className="block text-brand-gold">Forever.</span>
+          <span className="block text-brand-gold"><GlowText>Forever.</GlowText></span>
         </p>
 
         {/* ---------- columns ---------- */}
