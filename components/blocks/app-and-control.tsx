@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   CalendarClock,
   LayoutGrid,
@@ -12,178 +11,77 @@ import {
 } from "lucide-react";
 import { primarySystem, site } from "@/lib/config";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { PhoneFanCarousel } from "@/components/ui/phone-fan-carousel";
 
-/**
- * C5 — App & control.
- *
- * The install is the purchase; the app is why people don't regret it.
- * Bosso ships it free with no subscription, which is a real differentiator
- * against seasonal-install competitors and worth stating plainly.
- *
- * The phone mockup is live rather than a screenshot: tapping a preset
- * changes the swatch row, which is the same interaction the real app has.
- * Screenshots go stale on every app update; this doesn't.
- */
-
-const PRESETS = [
-  { name: "Warm white", colors: ["#FFE6B8", "#FFD98F", "#FFE6B8", "#FFDFA3"] },
-  { name: "Holiday", colors: ["#E2453F", "#3FBF6A", "#E2453F", "#3FBF6A"] },
-  { name: "Gameday", colors: ["#3B6FD4", "#F0B429", "#3B6FD4", "#F0B429"] },
-  { name: "Security", colors: ["#DCEBFF", "#FFFFFF", "#DCEBFF", "#F2F8FF"] },
+const APP_SCREENS = [
+  { src: "/app/presets.webp", alt: "Bosso app presets screen" },
+  { src: "/app/controls.webp", alt: "Bosso app controls screen" },
+  { src: "/app/colors.webp", alt: "Bosso app color picker" },
+  { src: "/app/schedule.webp", alt: "Bosso app schedule screen" },
+  { src: "/app/premium.webp", alt: "Bosso app premium features" },
 ];
 
 const FEATURES = [
-  {
-    icon: Palette,
-    title: "Every color",
-    body: "16 million of them, plus the full range of warm-to-cool whites for everyday use.",
-  },
-  {
-    icon: LayoutGrid,
-    title: "Zones",
-    body: "Front elevation, garage, back patio — controlled separately or together.",
-  },
-  {
-    icon: CalendarClock,
-    title: "Schedules",
-    body: "Set the year once. Holidays, game days, and everyday dusk-to-bed run themselves.",
-  },
-  {
-    icon: Sparkles,
-    title: "Presets",
-    body: "Hundreds built in, so decorating for a holiday takes about four seconds.",
-  },
-  {
-    icon: Mic,
-    title: "Voice",
-    body: "Works with Alexa, Google Assistant, Siri, and Control4.",
-  },
-  {
-    icon: Smartphone,
-    title: "Geofencing",
-    body: "Lights respond as you pull in the driveway or leave for the week.",
-  },
+  { icon: Palette,      title: "Every color" },
+  { icon: LayoutGrid,   title: "Zones" },
+  { icon: CalendarClock,title: "Schedules" },
+  { icon: Sparkles,     title: "Presets" },
+  { icon: Mic,          title: "Voice" },
+  { icon: Smartphone,   title: "Geofencing" },
 ];
 
 export function AppAndControl() {
-  const [preset, setPreset] = useState(0);
   const app = primarySystem.app;
 
   return (
     <section className="dark bg-[#141C2F] py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-20">
-          {/* ---------- copy ---------- */}
-          <div>
-            <p className="eyebrow">
-              {app?.subscription === false && "Free app · No subscription"}
-            </p>
-            <h2 className="mt-4 text-brand-cream">
-              The part you&rsquo;ll actually use.
-            </h2>
-            <p className="mt-5 text-base text-brand-cream/70 lg:text-lg">
-              Installation takes a day. After that the whole system lives in
-              your phone — colors, zones, schedules, and every holiday already
-              programmed.
-            </p>
+      <div className="mx-auto max-w-5xl px-6 text-center">
 
-            {/* Bento grid — 2+1, 1+2 pattern */}
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {FEATURES.map(({ icon: Icon, title, body }, i) => {
-                // cards 0 and 4 span 2 cols (wide), rest are 1 col
-                const wide = i === 0 || i === 4;
-                return (
-                  <div
-                    key={title}
-                    className={cn(
-                      "flex flex-col rounded-xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-brand-gold/30 hover:bg-white/[0.07]",
-                      wide ? "col-span-2 sm:col-span-2" : "col-span-1",
-                    )}
-                  >
-                    <Icon className="size-5 text-brand-gold" aria-hidden />
-                    <p className="mt-3 font-display text-sm font-semibold text-brand-cream">
-                      {title}
-                    </p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-brand-cream/55">
-                      {body}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+        {/* ---------- copy ---------- */}
+        <p className="eyebrow">Free app · No subscription</p>
+        <h2 className="mt-4 text-brand-cream">
+          The part you&rsquo;ll actually use.
+        </h2>
+        <p className="mt-5 text-base text-brand-cream/70 lg:text-lg max-w-xl mx-auto">
+          Colors, zones, schedules, and every holiday already programmed.
+          From your phone, Siri, Alexa, and Google Voice.
+        </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link href={site.ctaHref}>{site.cta}</Link>
-              </Button>
-              {app?.ios && (
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="border-white/25 text-brand-cream hover:border-brand-gold hover:bg-transparent hover:text-brand-gold"
-                >
-                  <a href={app.ios} target="_blank" rel="noopener noreferrer">
-                    See the {app.name} app
-                  </a>
-                </Button>
-              )}
-            </div>
-          </div>
+        {/* ---------- feature pills ---------- */}
+        <div className="mt-8 flex flex-wrap justify-center gap-2">
+          {FEATURES.map(({ icon: Icon, title }) => (
+            <span
+              key={title}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-xs font-medium text-brand-cream/70"
+            >
+              <Icon className="size-3.5 text-brand-gold" aria-hidden />
+              {title}
+            </span>
+          ))}
+        </div>
 
-          {/* ---------- live phone ---------- */}
-          <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-[19rem] rounded-[2rem] border border-white/15 bg-[#1E2A48] p-3 shadow-2xl">
-              <div className="overflow-hidden rounded-[1.5rem] bg-[#0E1424]">
-                <div className="flex items-center justify-between px-5 pt-6 pb-4">
-                  <span className="font-display text-sm font-semibold text-brand-cream">
-                    Front elevation
-                  </span>
-                  <span className="rounded-full bg-brand-gold/15 px-2.5 py-1 text-[0.6875rem] font-medium text-brand-gold">
-                    On
-                  </span>
-                </div>
+        {/* ---------- phone fan ---------- */}
+        <div className="mt-10">
+          <PhoneFanCarousel slides={APP_SCREENS} />
+        </div>
 
-                {/* roofline preview */}
-                <div className="mx-5 flex h-16 items-center justify-between rounded-lg bg-black/40 px-4">
-                  {Array.from({ length: 12 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="size-2 rounded-full transition-colors duration-300"
-                      style={{
-                        backgroundColor: PRESETS[preset].colors[i % 4],
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <div className="px-5 pt-6 pb-7">
-                  <p className="mb-3 text-[0.6875rem] tracking-[0.18em] text-brand-cream/40 uppercase">
-                    Presets
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {PRESETS.map((p, i) => (
-                      <button
-                        key={p.name}
-                        type="button"
-                        onClick={() => setPreset(i)}
-                        aria-pressed={i === preset}
-                        className={cn(
-                          "rounded-lg border px-3 py-2.5 text-left text-xs font-medium transition-colors",
-                          i === preset
-                            ? "border-brand-gold/50 bg-brand-gold/10 text-brand-cream"
-                            : "border-white/10 text-brand-cream/55 hover:border-white/25",
-                        )}
-                      >
-                        {p.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* ---------- CTAs ---------- */}
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button asChild size="lg">
+            <Link href={site.ctaHref}>{site.cta}</Link>
+          </Button>
+          {app?.ios && (
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/25 text-brand-cream hover:border-brand-gold hover:bg-transparent hover:text-brand-gold"
+            >
+              <a href={app.ios} target="_blank" rel="noopener noreferrer">
+                See the {app.name} app
+              </a>
+            </Button>
+          )}
         </div>
       </div>
     </section>

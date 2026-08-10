@@ -21,7 +21,7 @@ export function SolutionsGrid() {
   return (
     <section className="bg-background py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="reveal max-w-2xl">
+        <div className="max-w-2xl">
           <p className="eyebrow">What you&rsquo;re buying</p>
           <h2 className="mt-4 text-foreground">
             One system. Every reason you&rsquo;d want it.

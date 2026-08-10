@@ -1,7 +1,6 @@
 import { SiteHeader } from "@/components/blocks/site-header";
 import { HeroSceneSwitcher } from "@/components/blocks/hero-scene-switcher";
 import { SolutionsGrid } from "@/components/blocks/solutions-grid";
-import { DiscreetFromStreet } from "@/components/blocks/discreet-from-street";
 import { AppAndControl } from "@/components/blocks/app-and-control";
 import { RecurringCost } from "@/components/blocks/recurring-cost";
 import { SpecBlock } from "@/components/blocks/spec-block";
@@ -25,8 +24,7 @@ export default function HomePage() {
         <SolutionsGrid />
         <SectionDivider bg={CREAM} fill={DARK} />
 
-        <DiscreetFromStreet />
-        <AppAndControl />
+<AppAndControl />
         <SectionDivider bg={DARK} fill={CREAM} flip />
 
         <RecurringCost />
