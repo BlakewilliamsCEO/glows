@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS prospects (
   -- intent
   interests     TEXT[],
   coverage      TEXT,
+  stories       TEXT,
   timeline      TEXT,
   hear_about    TEXT,
   notes         TEXT,

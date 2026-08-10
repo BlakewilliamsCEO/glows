@@ -64,6 +64,7 @@ export function QuoteForm() {
       hearAbout: String(data.get("hearAbout") ?? ""),
       notes: String(data.get("notes") ?? ""),
       coverage: String(data.get("coverage") ?? ""),
+      stories: String(data.get("stories") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
@@ -151,6 +152,27 @@ export function QuoteForm() {
           ].map(({ value, label }) => (
             <label key={value} className="flex-1 cursor-pointer">
               <input type="radio" name="coverage" value={value} className="sr-only peer" />
+              <span className="block rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-center text-xs font-medium text-brand-cream/60 transition-all peer-checked:border-brand-gold peer-checked:bg-brand-gold/10 peer-checked:text-brand-gold hover:border-white/30">
+                {label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Stories */}
+      <div>
+        <p className="mb-2 text-[0.65rem] font-medium tracking-[0.14em] text-brand-cream/40 uppercase">
+          How many stories?
+        </p>
+        <div className="flex gap-2">
+          {[
+            { value: "1", label: "One" },
+            { value: "2", label: "Two" },
+            { value: "3", label: "Three" },
+          ].map(({ value, label }) => (
+            <label key={value} className="flex-1 cursor-pointer">
+              <input type="radio" name="stories" value={value} className="sr-only peer" />
               <span className="block rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-center text-xs font-medium text-brand-cream/60 transition-all peer-checked:border-brand-gold peer-checked:bg-brand-gold/10 peer-checked:text-brand-gold hover:border-white/30">
                 {label}
               </span>
