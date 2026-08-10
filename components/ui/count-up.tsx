@@ -11,12 +11,19 @@ interface CountUpProps {
 
 export function CountUp({ to, duration = 1.8, className }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(to);
   const started = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Respect reduced motion — keep static final value
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    // Drop to 0 client-side before animating
+    setValue(0);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
