@@ -3,6 +3,7 @@ import { Phone } from "lucide-react";
 import { site } from "@/lib/config";
 import { QuoteForm } from "@/components/blocks/quote-form";
 import { SiteHeader } from "@/components/blocks/site-header";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 export const metadata: Metadata = {
   title: "Get a quote",
@@ -16,18 +17,32 @@ export default function QuotePage() {
       <SiteHeader filled />
 
       <div className="flex min-h-screen">
-        {/* ---------- sticky photo — left half ---------- */}
-        <div className="hidden lg:block lg:w-1/2 sticky top-0 h-screen shrink-0">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-cover"
+        {/* ---------- sticky video — left half ---------- */}
+        <div className="hidden lg:flex lg:w-1/2 sticky top-0 h-screen shrink-0 items-center justify-center p-10 pl-6">
+          <BorderRotate
+            animationSpeed={6}
+            borderWidth={3}
+            borderRadius={16}
+            backgroundColor="#141C2F"
+            gradientColors={{
+              primary: "#584827",
+              secondary: "#E7B969",
+              accent: "#f9de90",
+            }}
+            className="h-full w-full max-h-[calc(100vh-5rem)]"
           >
-            <source src="/scenes/accent.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#141C2F]/60" />
+            <div className="relative h-full w-full overflow-hidden rounded-[13px]">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+              >
+                <source src="/scenes/accent.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </BorderRotate>
         </div>
 
         {/* ---------- form — right half ---------- */}
