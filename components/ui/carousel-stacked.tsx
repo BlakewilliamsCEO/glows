@@ -111,7 +111,7 @@ function Card({ slide, index, total, progress, config }: CardProps) {
       style={{ x, rotate, y, scale, opacity, zIndex }}
       className={cn(
         "absolute rounded-2xl overflow-hidden bg-muted group pointer-events-none",
-        "w-52 h-64 sm:w-64 sm:h-80 lg:w-72 lg:h-[26rem]",
+        "w-60 h-72 sm:w-72 sm:h-[22rem] lg:w-80 lg:h-[30rem]",
       )}
     >
       {slide.image.endsWith(".mp4") ? (
@@ -216,7 +216,7 @@ export function CarouselStacked({ slides, className }: CarouselStackedProps) {
   };
 
   return (
-    <div className={cn("relative w-full h-72 sm:h-96 lg:h-[28rem] flex items-center justify-center", className)}>
+    <div className={cn("relative w-full h-80 sm:h-[24rem] lg:h-[32rem] flex items-center justify-center", className)}>
       {slides.map((slide, i) => (
         <Card
           key={slide.title}
