@@ -18,7 +18,7 @@ export default function QuotePage() {
 
       <div className="flex min-h-screen">
         {/* ---------- sticky video — left half ---------- */}
-        <div className="hidden lg:flex lg:w-1/2 sticky top-0 h-screen shrink-0 items-center justify-center p-10 pl-6">
+        <div className="hidden lg:flex lg:w-1/2 sticky top-0 h-screen shrink-0 items-center justify-center px-6 pt-24 pb-10 pr-10">
           <BorderRotate
             animationSpeed={6}
             borderWidth={3}
