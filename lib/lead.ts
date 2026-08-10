@@ -33,10 +33,17 @@ export type QuotePayload = {
   notes: string;
   smsConsent: boolean;
   attribution: Attribution;
+  // Facebook cookie values captured client-side at form submit
+  fbc?: string;
+  fbp?: string;
+  // Shared with Meta Pixel for CAPI deduplication
+  eventId?: string;
 };
 
 export type Attribution = {
   fbclid?: string;
+  fbc?: string;
+  fbp?: string;
   gclid?: string;
   ttclid?: string;
   msclkid?: string;
@@ -63,12 +70,30 @@ const ATTRIBUTION_KEYS = [
 
 const STORAGE_KEY = "glows_attr";
 
+/** Read a single cookie by name. */
+function getCookie(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : undefined;
+}
+
+/** Cryptographically random event ID for Meta CAPI deduplication. */
+export function generateEventId(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
 /**
  * Read click IDs from the URL, merge over anything already stored, persist.
  *
- * Merge order matters: first touch wins for utm_*, but a fresh click ID
- * always overwrites, because the platform matches on the most recent click.
- * Call once on mount of any page that can lead to the form.
+ * Also reads _fbc / _fbp cookies which Facebook Pixel sets automatically.
+ * These are required for Conversions API matching — without them Meta can
+ * only match on email/phone hashes, which degrades match rate significantly.
+ *
+ * Merge order: first touch wins for utm_*, but a fresh click ID always
+ * overwrites, because Meta matches on the most recent click.
  */
 export function captureAttribution(): Attribution {
   if (typeof window === "undefined") return {};
@@ -91,6 +116,9 @@ export function captureAttribution(): Attribution {
   const merged: Attribution = {
     ...stored,
     ...fresh,
+    // Facebook browser cookies — always read fresh, they may be updated by Pixel
+    fbc: getCookie("_fbc") ?? stored.fbc,
+    fbp: getCookie("_fbp") ?? stored.fbp,
     landingPath: stored.landingPath ?? window.location.pathname,
     referrer: stored.referrer ?? document.referrer ?? undefined,
   };
@@ -118,7 +146,11 @@ export async function capturePartial(partial: {
     await fetch("/api/quote/partial", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(partial),
+      body: JSON.stringify({
+        ...partial,
+        fbc: getCookie("_fbc"),
+        fbp: getCookie("_fbp"),
+      }),
       keepalive: true,
     });
   } catch {

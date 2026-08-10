@@ -1,18 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
+import { query } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await req.json();
+    const { email, phone, attribution, fbc, fbp } = await req.json();
 
-    // TODO: persist partial lead to HubSpot / CRM
-    console.log("[quote/partial] received:", JSON.stringify(payload, null, 2));
+    await query(
+      `INSERT INTO prospect_partials (
+        email, phone,
+        fbclid, fbc, fbp,
+        utm_source, utm_medium, utm_campaign,
+        landing_path, referrer
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [
+        email       || null,
+        phone       || null,
+        attribution?.fbclid      || null,
+        fbc         || null,
+        fbp         || null,
+        attribution?.utm_source  || null,
+        attribution?.utm_medium  || null,
+        attribution?.utm_campaign|| null,
+        attribution?.landingPath || null,
+        attribution?.referrer    || null,
+      ],
+    );
 
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[quote/partial] error:", err);
-    return NextResponse.json(
-      { ok: false, error: "Server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
 }

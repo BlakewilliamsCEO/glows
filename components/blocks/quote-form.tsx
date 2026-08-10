@@ -6,6 +6,7 @@ import { site, solutions } from "@/lib/config";
 import {
   captureAttribution,
   capturePartial,
+  generateEventId,
   HEAR_ABOUT,
   HOME_VALUES,
   isQualified,
@@ -27,9 +28,11 @@ export function QuoteForm() {
   );
   const [error, setError] = useState("");
   const partialSent = useRef(false);
+  const eventIdRef = useRef<string>("");
 
   useEffect(() => {
     setAttribution(captureAttribution());
+    eventIdRef.current = generateEventId();
   }, []);
 
   /* Fire once we have something reachable, before they finish. */
@@ -66,6 +69,9 @@ export function QuoteForm() {
       notes: String(data.get("notes") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
+      fbc: attribution.fbc,
+      fbp: attribution.fbp,
+      eventId: eventIdRef.current,
     });
 
     if (result.ok) {
