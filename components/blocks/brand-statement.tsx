@@ -38,7 +38,7 @@ export function BrandStatement() {
             animationSpeed={6}
             borderWidth={3}
             borderRadius={16}
-            backgroundColor="#F1EDE8"
+            backgroundColor="#FFFFFF"
             gradientColors={{
               primary: "#584827",
               secondary: "#E7B969",

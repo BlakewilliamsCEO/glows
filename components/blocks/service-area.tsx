@@ -66,7 +66,7 @@ export function ServiceArea() {
                     <text
                       x={p.x + 14}
                       y={p.y + 4}
-                      fill="#F1EDE8"
+                      fill="#FFFFFF"
                       fillOpacity="0.75"
                       fontSize="13"
                       fontWeight="500"

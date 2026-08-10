@@ -11,7 +11,7 @@ import { SiteFooter } from "@/components/blocks/site-footer";
 import { SectionDivider } from "@/components/section-divider";
 
 const DARK = "#141C2F";
-const CREAM = "#F1EDE8";
+const CREAM = "#FFFFFF";
 
 export default function HomePage() {
   return (

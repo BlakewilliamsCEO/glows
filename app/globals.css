@@ -9,7 +9,7 @@ html {
 
 /* ---------------------------------------------------------------
    Glow's Lighting Services — token layer
-   Brand: navy #1E2A48 · gold #E7B969 · cream #F1EDE8
+   Brand: navy #1E2A48 · gold #E7B969 · white #FFFFFF
    Light = daytime, the install is invisible.
    Dark  = nighttime, the product is the whole point.
    --------------------------------------------------------------- */
@@ -20,34 +20,34 @@ html {
   /* brand primitives — the only hardcoded brand values in the system */
   --brand-navy: #1e2a48;
   --brand-gold: #e7b969;
-  --brand-cream: #f1ede8;
+  --brand-cream: #f5f5f4;
 
-  --background: #f1ede8;
+  --background: #ffffff;
   --foreground: #1e2a48;
 
-  --card: #faf8f5;
+  --card: #fafafa;
   --card-foreground: #1e2a48;
 
-  --popover: #faf8f5;
+  --popover: #fafafa;
   --popover-foreground: #1e2a48;
 
   --primary: #1e2a48;
-  --primary-foreground: #f1ede8;
+  --primary-foreground: #ffffff;
 
-  --secondary: #e4ded6;
+  --secondary: #f0f0ee;
   --secondary-foreground: #1e2a48;
 
-  --muted: #e4ded6;
+  --muted: #f0f0ee;
   --muted-foreground: #5a6478;
 
   --accent: #e7b969;
   --accent-foreground: #1e2a48;
 
   --destructive: #b3261e;
-  --destructive-foreground: #f1ede8;
+  --destructive-foreground: #ffffff;
 
-  --border: #dad2c7;
-  --input: #dad2c7;
+  --border: #e5e5e3;
+  --input: #e5e5e3;
   --ring: #e7b969;
 
   --chart-1: #1e2a48;
