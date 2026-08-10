@@ -31,6 +31,7 @@ export type QuotePayload = {
   timeline: string;
   hearAbout: string;
   notes: string;
+  coverage: string;
   smsConsent: boolean;
   attribution: Attribution;
   // Facebook cookie values captured client-side at form submit
@@ -205,6 +206,7 @@ export const HEAR_ABOUT = [
   { value: "facebook", label: "Facebook or Instagram" },
   { value: "neighbor", label: "Saw a neighbor's install" },
   { value: "referral", label: "Referred by someone" },
+  { value: "mailer", label: "Got a personalized mailer" },
   { value: "yard-sign", label: "Yard sign or truck" },
   { value: "other", label: "Other" },
 ] as const;
