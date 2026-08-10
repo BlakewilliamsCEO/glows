@@ -20,8 +20,8 @@ import { cn } from "@/lib/utils";
  * once the hero is behind it. Over a full-bleed night hero the nav starts
  * transparent with cream type, so it has to be a client component.
  */
-export function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false);
+export function SiteHeader({ filled = false }: { filled?: boolean }) {
+  const [scrolled, setScrolled] = useState(filled);
   const [open, setOpen] = useState(false);
   const [heroCtaVisible, setHeroCtaVisible] = useState(true);
 

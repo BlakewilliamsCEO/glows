@@ -16,16 +16,14 @@ import {
 } from "@/lib/lead";
 import { Button } from "@/components/ui/button";
 
-const field =
-  "h-12 w-full rounded-md border border-white/15 bg-white/[0.04] px-4 text-sm text-brand-cream placeholder:text-brand-cream/35 outline-none transition-colors focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/25";
+const f =
+  "h-10 w-full rounded-md border border-white/15 bg-white/[0.04] px-3 text-sm text-brand-cream placeholder:text-brand-cream/35 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25";
 
 export function QuoteForm() {
   const [attribution, setAttribution] = useState<Attribution>({});
   const [interests, setInterests] = useState<string[]>([]);
   const [homeValue, setHomeValue] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState("");
   const partialSent = useRef(false);
   const eventIdRef = useRef<string>("");
@@ -35,7 +33,6 @@ export function QuoteForm() {
     eventIdRef.current = generateEventId();
   }, []);
 
-  /* Fire once we have something reachable, before they finish. */
   const maybePartial = (email: string, phone: string) => {
     if (partialSent.current) return;
     if (!email && !phone) return;
@@ -52,7 +49,6 @@ export function QuoteForm() {
     e.preventDefault();
     setStatus("sending");
     setError("");
-
     const data = new FormData(e.currentTarget);
     const result = await submitQuote({
       firstName: String(data.get("firstName") ?? ""),
@@ -66,14 +62,13 @@ export function QuoteForm() {
       interests,
       timeline: String(data.get("timeline") ?? ""),
       hearAbout: String(data.get("hearAbout") ?? ""),
-      notes: String(data.get("notes") ?? ""),
+      notes: "",
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
       fbp: attribution.fbp,
       eventId: eventIdRef.current,
     });
-
     if (result.ok) {
       setStatus("done");
     } else {
@@ -88,7 +83,7 @@ export function QuoteForm() {
         <h2 className="text-brand-cream">Got it.</h2>
         <p className="mx-auto mt-4 max-w-md text-brand-cream/70">
           We&rsquo;ll call within one business day to schedule the measure.
-          If you&rsquo;d rather not wait, the line below rings us directly.
+          If you&rsquo;d rather not wait, call us directly.
         </p>
         <a
           href={site.phoneHref}
@@ -104,182 +99,107 @@ export function QuoteForm() {
   const unqualified = homeValue !== "" && !isQualified(homeValue);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <input name="firstName" required placeholder="First name" className={field} />
-        <input name="lastName" required placeholder="Last name" className={field} />
-      </div>
+    <form onSubmit={onSubmit} className="space-y-3">
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Row 1: First / Last / Phone */}
+      <div className="grid grid-cols-3 gap-3">
+        <input name="firstName" required placeholder="First name" className={f} />
+        <input name="lastName" required placeholder="Last name" className={f} />
         <input
-          name="phone"
-          type="tel"
-          required
-          autoComplete="tel"
-          placeholder="Phone"
-          className={field}
+          name="phone" type="tel" required autoComplete="tel"
+          placeholder="Phone" className={f}
           onBlur={(e) => maybePartial("", e.target.value)}
         />
+      </div>
+
+      {/* Row 2: Email / Street / ZIP */}
+      <div className="grid grid-cols-3 gap-3">
         <input
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          placeholder="Email"
-          className={field}
+          name="email" type="email" required autoComplete="email"
+          placeholder="Email" className={f}
           onBlur={(e) => maybePartial(e.target.value, "")}
         />
-      </div>
-
-      {/* Street + zip are the property-data join key. Both required. */}
-      <input
-        name="street"
-        required
-        autoComplete="street-address"
-        placeholder="Street address"
-        className={field}
-      />
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input
-          name="city"
-          required
-          autoComplete="address-level2"
-          placeholder="City"
-          className={field}
+          name="street" required autoComplete="street-address"
+          placeholder="Street address" className={f}
         />
         <input
-          name="zip"
-          required
-          inputMode="numeric"
-          autoComplete="postal-code"
-          placeholder="ZIP code"
-          className={field}
+          name="zip" required inputMode="numeric" autoComplete="postal-code"
+          placeholder="ZIP" className={f}
         />
       </div>
 
+      {/* What are you lighting */}
       <div>
-        <p className="mb-3 text-xs tracking-[0.14em] text-brand-cream/45 uppercase">
+        <p className="mb-2 text-[0.65rem] font-medium tracking-[0.14em] text-brand-cream/40 uppercase">
           What are you lighting?
         </p>
-        <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
           {solutions.map((s) => (
-            <label
-              key={s.slug}
-              className="flex cursor-pointer items-center gap-3 text-sm text-brand-cream/85"
-            >
+            <label key={s.slug} className="flex cursor-pointer items-center gap-2 text-sm text-brand-cream/80">
               <input
                 type="checkbox"
                 checked={interests.includes(s.slug)}
                 onChange={() => toggle(s.slug)}
-                className="size-4 rounded border-white/25 bg-transparent accent-brand-gold"
+                className="size-3.5 rounded border-white/25 bg-transparent accent-brand-gold"
               />
-              {s.name}
+              {s.short}
             </label>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <select
-          name="timeline"
-          required
-          defaultValue=""
-          className={field}
-          aria-label="Timeline"
-        >
-          <option value="" disabled>
-            Timeline
-          </option>
+      {/* Row 3: Timeline / Home value / Hear about */}
+      <div className="grid grid-cols-3 gap-3">
+        <select name="timeline" required defaultValue="" className={f} aria-label="Timeline">
+          <option value="" disabled>Timeline</option>
           {TIMELINES.map((t) => (
-            <option key={t.value} value={t.value} className="bg-[#1E2A48]">
-              {t.label}
-            </option>
+            <option key={t.value} value={t.value} className="bg-[#1E2A48]">{t.label}</option>
           ))}
         </select>
-
         <select
-          name="homeValue"
-          required
-          value={homeValue}
+          name="homeValue" required value={homeValue}
           onChange={(e) => setHomeValue(e.target.value)}
-          className={field}
-          aria-label="Approximate home value"
+          className={f} aria-label="Home value"
         >
-          <option value="" disabled>
-            Approximate home value
-          </option>
+          <option value="" disabled>Home value</option>
           {HOME_VALUES.map((v) => (
-            <option key={v.value} value={v.value} className="bg-[#1E2A48]">
-              {v.label}
-            </option>
+            <option key={v.value} value={v.value} className="bg-[#1E2A48]">{v.label}</option>
+          ))}
+        </select>
+        <select name="hearAbout" required defaultValue="" className={f} aria-label="How did you hear about us">
+          <option value="" disabled>How&rsquo;d you hear about us?</option>
+          {HEAR_ABOUT.map((h) => (
+            <option key={h.value} value={h.value} className="bg-[#1E2A48]">{h.label}</option>
           ))}
         </select>
       </div>
 
-      {/* Soft gate: sets expectations, still lets them through. */}
       {unqualified && (
-        <p className="rounded-md border border-white/15 bg-white/[0.03] px-4 py-3 text-sm text-brand-cream/70">
-          Most of our installs start above $500,000 in home value. Send it
-          through anyway — we&rsquo;ll take a look and tell you straight
-          whether we&rsquo;re the right fit.
+        <p className="rounded-md border border-white/15 bg-white/[0.03] px-3 py-2 text-xs text-brand-cream/70">
+          Most of our installs start above $500k. Send it through — we&rsquo;ll tell you straight if we&rsquo;re the right fit.
         </p>
       )}
 
-      <select
-        name="hearAbout"
-        required
-        defaultValue=""
-        className={field}
-        aria-label="How did you hear about us"
-      >
-        <option value="" disabled>
-          How did you hear about us?
-        </option>
-        {HEAR_ABOUT.map((h) => (
-          <option key={h.value} value={h.value} className="bg-[#1E2A48]">
-            {h.label}
-          </option>
-        ))}
-      </select>
-
-      <textarea
-        name="notes"
-        rows={3}
-        placeholder="Anything else? Gate code, HOA rules, dogs, roof access."
-        className={`${field} h-auto py-3 leading-relaxed`}
-      />
-
-      <label className="flex cursor-pointer items-start gap-3 text-sm text-brand-cream/75">
+      {/* SMS consent */}
+      <label className="flex cursor-pointer items-start gap-2.5 text-xs text-brand-cream/60">
         <input
-          type="checkbox"
-          name="smsConsent"
-          className="mt-0.5 size-4 rounded border-white/25 bg-transparent accent-brand-gold"
+          type="checkbox" name="smsConsent"
+          className="mt-0.5 size-3.5 rounded border-white/25 bg-transparent accent-brand-gold"
         />
         <span>
-          Text me about my quote and install. Message and data rates may
-          apply. Consent isn&rsquo;t a condition of purchase and you can opt
-          out any time.
+          Text me about my quote. Msg &amp; data rates may apply. Not a condition of purchase.
         </span>
       </label>
 
-      {status === "error" && (
-        <p className="text-sm text-red-400">{error}</p>
-      )}
+      {status === "error" && <p className="text-sm text-red-400">{error}</p>}
 
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full"
-        disabled={status === "sending"}
-      >
+      <Button type="submit" size="lg" className="w-full" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Get my quote"}
       </Button>
 
-      <p className="text-xs leading-relaxed text-brand-cream/40">
-        By submitting, you authorize {site.name} to contact you by phone,
-        email, or text about your project. We don&rsquo;t sell your
-        information.
+      <p className="text-[0.65rem] leading-relaxed text-brand-cream/30">
+        By submitting you authorize {site.name} to contact you by phone, email, or text. We don&rsquo;t sell your information.
       </p>
     </form>
   );
