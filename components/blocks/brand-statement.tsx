@@ -60,8 +60,7 @@ export function BrandStatement() {
 
           {/* copy */}
           <div>
-            <p className="eyebrow">Who we are</p>
-            <h2 className="mt-4 text-foreground">
+            <h2 className="text-foreground">
               Make your vision, reality.
             </h2>
             <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground lg:text-lg">

@@ -10,8 +10,7 @@ export function Proof() {
     <section className="bg-background py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="reveal max-w-2xl">
-          <p className="eyebrow">Proof</p>
-          <h2 className="mt-4 text-foreground">
+          <h2 className="text-foreground">
             Installed on thousands of homes.
           </h2>
         </div>

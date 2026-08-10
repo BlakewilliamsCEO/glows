@@ -70,8 +70,7 @@ export function SpecBlock() {
     <section className="bg-background py-20 lg:py-28 overflow-hidden">
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-2xl">
-          <p className="eyebrow">The crew</p>
-          <h2 className="mt-4 text-foreground">
+          <h2 className="text-foreground">
             Blue collar, elevated.
           </h2>
           <p className="mt-5 text-base text-muted-foreground lg:text-lg">

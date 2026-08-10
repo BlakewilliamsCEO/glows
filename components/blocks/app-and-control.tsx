@@ -39,8 +39,7 @@ export function AppAndControl() {
       <div className="mx-auto max-w-5xl px-6 text-center">
 
         {/* ---------- copy ---------- */}
-        <p className="eyebrow">Free app · No subscription</p>
-        <h2 className="mt-4 text-brand-cream">
+        <h2 className="text-brand-cream">
           Voice and timer driven control.
         </h2>
         <p className="mt-5 text-base text-brand-cream/70 lg:text-lg max-w-xl mx-auto">

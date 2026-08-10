@@ -84,8 +84,7 @@ export function DiscreetFromStreet() {
     <section className="dark bg-[#141C2F] py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-2xl">
-          <p className="eyebrow">Now you see it, now you don&rsquo;t</p>
-          <h2 className="mt-4 text-brand-cream">
+          <h2 className="text-brand-cream">
             Invisible until you turn it on.
           </h2>
           <p className="mt-5 text-base text-brand-cream/70 lg:text-lg">
