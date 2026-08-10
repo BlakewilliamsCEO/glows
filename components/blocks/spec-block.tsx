@@ -28,6 +28,13 @@ const ROW_TWO = [
 ];
 // ────────────────────────────────────────────────────────────────────────────
 
+const WAVE_AMPLITUDE = 18; // px — how tall the wave is
+const WAVE_PERIOD = 5;     // items per full cycle
+
+function waveY(index: number): number {
+  return Math.round(Math.sin((index / WAVE_PERIOD) * Math.PI * 2) * WAVE_AMPLITUDE);
+}
+
 function MarqueeRow({
   items,
   direction,
@@ -39,9 +46,9 @@ function MarqueeRow({
 }) {
   const doubled = [...items, ...items];
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-visible">
       <div
-        className="flex gap-4"
+        className="flex gap-4 items-center"
         style={{
           animation: `marquee-${direction} ${speed}s linear infinite`,
           width: "max-content",
@@ -50,7 +57,8 @@ function MarqueeRow({
         {doubled.map((img, i) => (
           <div
             key={i}
-            className="h-52 w-72 shrink-0 overflow-hidden rounded-2xl lg:h-60 lg:w-80"
+            className="h-52 w-72 shrink-0 overflow-hidden rounded-2xl lg:h-60 lg:w-80 transition-none"
+            style={{ transform: `translateY(${waveY(i)}px)` }}
           >
             <img
               src={img.src}
