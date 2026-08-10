@@ -41,6 +41,16 @@ export default function QuotePage() {
               >
                 <source src="/scenes/accent.mp4" type="video/mp4" />
               </video>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+                <div className="flex flex-col leading-none gap-1.5">
+                  <span className="font-display text-8xl font-semibold italic tracking-tight text-brand-cream/90 drop-shadow-lg">
+                    Glows<span className="text-brand-gold not-italic">.</span>
+                  </span>
+                  <span className="text-[0.6875rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40 pl-0.5">
+                    Permanent Lighting
+                  </span>
+                </div>
+              </div>
             </div>
           </BorderRotate>
         </div>
