@@ -22,9 +22,9 @@ export function SiteFooter() {
     <footer className="dark bg-[#0E1424] pt-20 pb-10 lg:pt-24">
       <div className="mx-auto max-w-7xl px-6">
         {/* ---------- sign-off ---------- */}
-        <p className="font-display max-w-3xl text-3xl leading-[1.1] font-semibold text-brand-cream sm:text-4xl lg:text-5xl">
-          Light it once.
-          <span className="block text-brand-gold">Leave it up forever.</span>
+        <p className="font-display max-w-3xl text-3xl leading-[1.1] font-semibold italic text-brand-cream sm:text-4xl lg:text-5xl">
+          Turn off your porch light.
+          <span className="block text-brand-gold">Forever.</span>
         </p>
 
         {/* ---------- columns ---------- */}

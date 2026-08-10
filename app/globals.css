@@ -188,16 +188,6 @@ html {
     font-feature-settings: "tnum";
   }
 
-  /* Eyebrow labels: small caps, wide. Used above section headings.
-     Deep amber on light (5:1 on cream), gold on dark (passes on navy). */
-  .eyebrow {
-    @apply font-display text-xs font-semibold uppercase tracking-[0.18em];
-    color: #7c5c1e;
-  }
-
-  .dark .eyebrow {
-    color: var(--brand-gold);
-  }
 }
 
 
