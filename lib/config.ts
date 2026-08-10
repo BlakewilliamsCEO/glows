@@ -74,7 +74,7 @@ export const solutions: Solution[] = [
       "Every holiday already programmed. Nothing to hang in November, nothing to pull down in January.",
     hero: true,
     scene: {
-      src: "/scenes/holiday.jpg",
+      src: "/scenes/holiday.mp4",
       alt: "The same home at night in red and green holiday colors",
     },
   },
@@ -86,7 +86,7 @@ export const solutions: Solution[] = [
       "Cool white across the full property on a schedule, without floodlight glare into the bedrooms.",
     hero: true,
     scene: {
-      src: "/scenes/security.jpg",
+      src: "/scenes/security.mp4",
       alt: "The same home at night in bright cool white security lighting",
     },
   },
@@ -98,20 +98,8 @@ export const solutions: Solution[] = [
       "Team colors on a schedule. Set it once in September and leave it until the season ends.",
     hero: true,
     scene: {
-      src: "/scenes/gameday.jpg",
+      src: "/scenes/gameday.mp4",
       alt: "The same home at night in alternating team colors",
-    },
-  },
-  {
-    slug: "landscape-lighting",
-    name: "Landscape Lighting",
-    short: "Landscape",
-    blurb:
-      "Uplighting on trees, beds, and pathways so the property reads past the front elevation.",
-    hero: false,
-    scene: {
-      src: "/scenes/landscape.jpg",
-      alt: "Mature trees and a walkway lit from below",
     },
   },
   {
@@ -122,7 +110,7 @@ export const solutions: Solution[] = [
       "Storefronts, offices, and HOA common areas lit for visibility and year-round curb appeal.",
     hero: false,
     scene: {
-      src: "/scenes/commercial.jpg",
+      src: "/scenes/commercial.mp4",
       alt: "A commercial storefront lit along the roofline at dusk",
     },
   },

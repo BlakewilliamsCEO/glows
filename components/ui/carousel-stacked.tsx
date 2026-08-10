@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import {
   motion,
   useMotionValue,
@@ -107,7 +106,7 @@ function Card({ slide, index, total, progress, config }: CardProps) {
   );
   const textOpacity = useTransform(offset, [-0.5, 0, 0.5], [0, 1, 0]);
 
-  const inner = (
+  return (
     <motion.div
       style={{ x, rotate, y, scale, opacity, zIndex }}
       className={cn(
@@ -115,7 +114,6 @@ function Card({ slide, index, total, progress, config }: CardProps) {
         "w-52 h-64 sm:w-64 sm:h-80 lg:w-72 lg:h-[26rem]",
       )}
     >
-      {/* Scene media — video or image */}
       {slide.image.endsWith(".mp4") ? (
         <video
           src={slide.image}
@@ -133,21 +131,16 @@ function Card({ slide, index, total, progress, config }: CardProps) {
         />
       )}
 
-      {/* Depth overlay darkens side cards */}
       <motion.div
         style={{ opacity: overlayOpacity }}
         className="absolute inset-0 bg-black pointer-events-none"
       />
-
-      {/* Bottom gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-      {/* Badge */}
       <span className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-brand-gold/90 text-[0.6875rem] font-semibold uppercase tracking-widest text-[#141C2F]">
         {slide.badge}
       </span>
 
-      {/* Copy — fades in only on the center card */}
       <div className="absolute bottom-6 left-5 right-5 text-white">
         <motion.p
           style={{ opacity: textOpacity }}
@@ -164,8 +157,30 @@ function Card({ slide, index, total, progress, config }: CardProps) {
       </div>
     </motion.div>
   );
+}
 
-  return inner;
+function DotIndicator({
+  index,
+  progress,
+  total,
+}: {
+  index: number;
+  progress: MotionValue<number>;
+  total: number;
+}) {
+  const opacity = useTransform(progress, (p) => {
+    let diff = (index - p) % total;
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
+    return Math.abs(diff) < 0.5 ? 1 : 0.3;
+  });
+
+  return (
+    <motion.span
+      style={{ opacity }}
+      className="size-1.5 rounded-full bg-accent"
+    />
+  );
 }
 
 interface CarouselStackedProps {
@@ -213,7 +228,6 @@ export function CarouselStacked({ slides, className }: CarouselStackedProps) {
         />
       ))}
 
-      {/* Full-area transparent drag surface on top */}
       <motion.div
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -225,36 +239,11 @@ export function CarouselStacked({ slides, className }: CarouselStackedProps) {
         className="absolute inset-0 z-50 cursor-grab active:cursor-grabbing"
       />
 
-      {/* Dot indicators */}
       <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5">
         {slides.map((_, i) => (
           <DotIndicator key={i} index={i} progress={scrollProgress} total={total} />
         ))}
       </div>
     </div>
-  );
-}
-
-function DotIndicator({
-  index,
-  progress,
-  total,
-}: {
-  index: number;
-  progress: MotionValue<number>;
-  total: number;
-}) {
-  const opacity = useTransform(progress, (p) => {
-    let diff = (index - p) % total;
-    if (diff > total / 2) diff -= total;
-    if (diff < -total / 2) diff += total;
-    return Math.abs(diff) < 0.5 ? 1 : 0.3;
-  });
-
-  return (
-    <motion.span
-      style={{ opacity }}
-      className="size-1.5 rounded-full bg-accent"
-    />
   );
 }

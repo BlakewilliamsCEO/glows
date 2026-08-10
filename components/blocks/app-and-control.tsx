@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   Mic,
   Palette,
+  Phone,
   Smartphone,
   Sparkles,
 } from "lucide-react";
@@ -34,13 +35,13 @@ export function AppAndControl() {
   const app = primarySystem.app;
 
   return (
-    <section className="dark bg-[#141C2F] py-20 lg:py-28">
+    <section className="dark bg-[#141C2F] pt-20 pb-10 lg:pt-28 lg:pb-12">
       <div className="mx-auto max-w-5xl px-6 text-center">
 
         {/* ---------- copy ---------- */}
         <p className="eyebrow">Free app · No subscription</p>
         <h2 className="mt-4 text-brand-cream">
-          The part you&rsquo;ll actually use.
+          Voice and timer driven control.
         </h2>
         <p className="mt-5 text-base text-brand-cream/70 lg:text-lg max-w-xl mx-auto">
           Colors, zones, schedules, and every holiday already programmed.
@@ -70,18 +71,12 @@ export function AppAndControl() {
           <Button asChild size="lg">
             <Link href={site.ctaHref}>{site.cta}</Link>
           </Button>
-          {app?.ios && (
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/25 text-brand-cream hover:border-brand-gold hover:bg-transparent hover:text-brand-gold"
-            >
-              <a href={app.ios} target="_blank" rel="noopener noreferrer">
-                See the {app.name} app
-              </a>
-            </Button>
-          )}
+          <Button asChild size="lg" variant="outline" className="border-white/25 text-brand-cream hover:border-brand-gold hover:bg-transparent hover:text-brand-gold">
+            <a href={site.phoneHref}>
+              <Phone className="size-4" aria-hidden />
+              {site.phone}
+            </a>
+          </Button>
         </div>
       </div>
     </section>

@@ -37,7 +37,7 @@ export function ServiceArea() {
           {/* ---------- copy + map ---------- */}
           <div className="lg:col-span-5">
             <p className="eyebrow">Where we work</p>
-            <h2 className="mt-4 text-brand-cream">{site.serviceArea}.</h2>
+            <h2 className="mt-4 text-brand-cream">We work where we live.</h2>
             <p className="mt-5 text-base text-brand-cream/70 lg:text-lg">
               We install across {new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(counties)}. If you&rsquo;re just
               outside the line, call anyway — we schedule around the map more
@@ -86,23 +86,13 @@ export function ServiceArea() {
                 <li key={city.slug}>
                   <Link
                     href={`/${city.slug}`}
-                    className="group flex items-start justify-between gap-6 border-b border-white/10 py-6 outline-none focus-visible:bg-white/[0.03]"
+                    className="group flex items-center justify-between gap-6 border-b border-white/10 py-5 outline-none focus-visible:bg-white/[0.03]"
                   >
-                    <div>
-                      <div className="flex items-baseline gap-3">
-                        <h3 className="font-display text-lg font-semibold text-brand-cream transition-colors group-hover:text-brand-gold">
-                          {city.name}
-                        </h3>
-                        <span className="text-xs tracking-wide text-brand-cream/35">
-                          {city.county}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-brand-cream/55">
-                        {city.blurb}
-                      </p>
-                    </div>
+                    <span className="font-display text-[2.85rem] font-semibold leading-none text-brand-cream transition-colors group-hover:text-brand-gold sm:text-[3.5625rem] lg:text-[4.275rem]">
+                      {city.name}
+                    </span>
                     <ArrowUpRight
-                      className="mt-1 size-5 shrink-0 text-brand-cream/30 transition-colors group-hover:text-brand-gold"
+                      className="size-5 shrink-0 text-brand-cream/30 transition-colors group-hover:text-brand-gold"
                       aria-hidden
                     />
                   </Link>

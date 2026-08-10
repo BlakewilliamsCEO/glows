@@ -2,14 +2,23 @@ import Link from "next/link";
 import { solutions } from "@/lib/config";
 import { CarouselStacked } from "@/components/ui/carousel-stacked";
 
-const slides = solutions.map((s) => ({
-  image: s.scene.src,
-  alt: s.scene.alt,
-  title: s.name,
-  description: s.blurb,
-  badge: s.short,
-  href: `/solutions/${s.slug}`,
-}));
+const slides = [
+  ...solutions.map((s) => ({
+    image: s.scene.src,
+    alt: s.scene.alt,
+    title: s.name,
+    description: s.blurb,
+    badge: s.short,
+    href: `/solutions/${s.slug}`,
+  })),
+  {
+    image: "/carousel-music.mp4",
+    alt: "Music sync lighting",
+    title: "Music sync",
+    description: "Your lights pulse with the beat. Party mode, game day, or just the right song at the right moment.",
+    badge: "Music",
+  },
+];
 
 /**
  * C3 — Solutions carousel.
@@ -24,11 +33,10 @@ export function SolutionsGrid() {
         <div className="max-w-2xl">
           <p className="eyebrow">What you&rsquo;re buying</p>
           <h2 className="mt-4 text-foreground">
-            One system. Every reason you&rsquo;d want it.
+            Living life well-lit is a family experience.
           </h2>
           <p className="mt-5 text-base text-muted-foreground lg:text-lg">
-            The track goes up once. What it does after that is a setting, not
-            another install.
+            The track goes up once. What it does after that is a setting for memories.
           </p>
         </div>
 

@@ -1,8 +1,8 @@
 import { SiteHeader } from "@/components/blocks/site-header";
 import { HeroSceneSwitcher } from "@/components/blocks/hero-scene-switcher";
+import { BrandStatement } from "@/components/blocks/brand-statement";
 import { SolutionsGrid } from "@/components/blocks/solutions-grid";
 import { AppAndControl } from "@/components/blocks/app-and-control";
-import { RecurringCost } from "@/components/blocks/recurring-cost";
 import { SpecBlock } from "@/components/blocks/spec-block";
 import { Process } from "@/components/blocks/process";
 import { ServiceArea } from "@/components/blocks/service-area";
@@ -21,19 +21,15 @@ export default function HomePage() {
         <HeroSceneSwitcher />
         <SectionDivider bg="transparent" fill={CREAM} />
 
+        <BrandStatement />
+
         <SolutionsGrid />
         <SectionDivider bg={CREAM} fill={DARK} />
 
-<AppAndControl />
+        <AppAndControl />
         <SectionDivider bg={DARK} fill={CREAM} flip />
-
-        <RecurringCost />
-        <SectionDivider bg={CREAM} fill={DARK} />
 
         <SpecBlock />
-        <SectionDivider bg={DARK} fill={CREAM} flip />
-
-        <Process />
         <SectionDivider bg={CREAM} fill={DARK} />
 
         <ServiceArea />

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, MessageSquareText, Phone, X } from "lucide-react";
 import { nav, site } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import { SmokyButton } from "@/components/ui/smoky-button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -22,12 +23,25 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [heroCtaVisible, setHeroCtaVisible] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Watch the hero CTA — when it scrolls behind the nav, upgrade the nav button.
+  useEffect(() => {
+    const el = document.getElementById("hero-cta");
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setHeroCtaVisible(entry.isIntersecting),
+      { threshold: 0 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   // Lock body scroll while the mobile sheet is open.
@@ -44,7 +58,7 @@ export function SiteHeader() {
       <div className="hidden border-b border-white/10 md:block">
         <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-6 text-xs">
           <span className="text-brand-cream/60">
-            Serving {site.serviceArea}
+            Now serving: {site.serviceArea} &middot; {site.qualifier}
           </span>
 
           <div className="flex items-center gap-6">
@@ -107,9 +121,15 @@ export function SiteHeader() {
               <Phone className="size-4" aria-hidden />
             </a>
 
-            <Button asChild size="lg" className="hidden sm:inline-flex">
-              <Link href={site.ctaHref}>{site.cta}</Link>
-            </Button>
+            {heroCtaVisible ? (
+              <Button asChild size="lg" className="hidden sm:inline-flex">
+                <Link href={site.ctaHref}>{site.cta}</Link>
+              </Button>
+            ) : (
+              <Link href={site.ctaHref} className="hidden sm:inline-flex" tabIndex={-1}>
+                <SmokyButton>{site.cta}</SmokyButton>
+              </Link>
+            )}
 
             <button
               type="button"

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Ruler, PenLine, Zap } from "lucide-react";
 import { site } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 
@@ -34,30 +33,6 @@ export function Process() {
           <p className="mt-5 text-base text-muted-foreground lg:text-lg">
             The measure is free. The install takes one day. After that, it runs itself.
           </p>
-        </div>
-
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3 lg:mt-16">
-          {STEPS.map(({ n, icon: Icon, title, body }) => (
-            <div
-              key={n}
-              className="card-hover relative flex flex-col rounded-2xl border border-border bg-card p-8"
-            >
-              {/* Step number — large background numeral */}
-              <span className="font-display absolute right-6 top-5 text-6xl font-bold text-accent/10 select-none">
-                {n}
-              </span>
-
-              {/* Icon */}
-              <span className="flex size-12 items-center justify-center rounded-xl border border-accent/30 bg-accent/10">
-                <Icon className="size-5 text-accent" aria-hidden />
-              </span>
-
-              <h3 className="mt-6 text-foreground">{title}</h3>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                {body}
-              </p>
-            </div>
-          ))}
         </div>
 
         <div className="mt-12 flex justify-center">

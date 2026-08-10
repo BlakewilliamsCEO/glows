@@ -71,20 +71,16 @@ export function HeroSceneSwitcher() {
       <div className="mx-auto flex min-h-[42rem] max-w-7xl flex-col justify-end px-6 pb-8 pt-32 lg:min-h-[46rem] lg:pb-12">
         <div className="max-w-2xl">
           <h1 className="text-brand-cream">
-            One install.
+            Turn off your porch light.
             <br />
-            Every night after.
+            <span className="text-brand-gold">Forever.</span>
           </h1>
 
-          {/* Swaps with the active scene — the copy is part of the demo. */}
-          <p
-            key={heroSolutions[active].slug}
-            className="mt-6 max-w-xl text-base text-brand-cream/75 lg:text-lg"
-          >
-            {heroSolutions[active].blurb}
+          <p className="mt-6 max-w-xl text-base text-brand-cream/75 lg:text-lg">
+            Permanent architectural lighting for your home — invisible by day, stunning by night.
           </p>
 
-          <div className="mt-8">
+          <div id="hero-cta" className="mt-8">
             <Link href={site.ctaHref} tabIndex={-1}>
               <SmokyButton>{site.cta}</SmokyButton>
             </Link>
@@ -93,9 +89,6 @@ export function HeroSceneSwitcher() {
 
         {/* ---------- stats bar ---------- */}
         <div className="mt-12 lg:mt-16">
-          <p className="mb-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-brand-cream/40">
-            Now serving: {site.serviceArea} &middot; {site.qualifier}
-          </p>
           <div className="border-t border-white/10 pt-8">
           <dl className="flex flex-wrap gap-x-12 gap-y-6 sm:gap-x-16">
             {systemStats.map((stat) => {

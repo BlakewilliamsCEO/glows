@@ -1,45 +1,92 @@
-import { primarySystem } from "@/lib/config";
-
 /**
- * C7 — Spec block.
+ * C7 — Blue Collar Elevated.
  *
- * The hardware, deliberately placed low. Consumers buy the night, not the
- * track — but somewhere before the form they want proof that what's going
- * on the house is real equipment. This is that proof and nothing more.
- *
- * Renders entirely from `primarySystem`. The manufacturer name appears here
- * and nowhere else on the page. Adding a second line means adding an array
- * entry and mapping this section, not restructuring the site.
+ * Two-row infinite photo marquee at a slight diagonal.
+ * Top row scrolls right, bottom row scrolls left.
+ * Replace the image paths below with real job-site photos.
  */
-export function SpecBlock() {
-  const system = primarySystem;
 
+// ── Drop real job photos here ───────────────────────────────────────────────
+const ROW_ONE = [
+  { src: "/truck.png",              alt: "Glows. service truck" },
+  { src: "/app/presets.webp",      alt: "Bosso app presets" },
+  { src: "/app/controls.webp",     alt: "Bosso app controls" },
+  { src: "/app/colors.webp",       alt: "Bosso app colors" },
+  { src: "/app/schedule.webp",     alt: "Bosso app schedule" },
+  { src: "/app/premium.webp",      alt: "Bosso app premium" },
+  { src: "/app/dashboard.webp",    alt: "Bosso app dashboard" },
+];
+
+const ROW_TWO = [
+  { src: "/app/settings.webp",     alt: "Bosso app settings" },
+  { src: "/app/subscription.webp", alt: "Bosso app subscription" },
+  { src: "/app/colors.webp",       alt: "Bosso app colors" },
+  { src: "/truck.png",             alt: "Glows. service truck" },
+  { src: "/app/controls.webp",     alt: "Bosso app controls" },
+  { src: "/app/presets.webp",      alt: "Bosso app presets" },
+  { src: "/app/premium.webp",      alt: "Bosso app premium" },
+];
+// ────────────────────────────────────────────────────────────────────────────
+
+function MarqueeRow({
+  items,
+  direction,
+  speed = 40,
+}: {
+  items: { src: string; alt: string }[];
+  direction: "left" | "right";
+  speed?: number;
+}) {
+  const doubled = [...items, ...items];
   return (
-    <section className="dark bg-[#141C2F] py-20 lg:py-28">
+    <div className="relative overflow-hidden">
+      <div
+        className="flex gap-4"
+        style={{
+          animation: `marquee-${direction} ${speed}s linear infinite`,
+          width: "max-content",
+        }}
+      >
+        {doubled.map((img, i) => (
+          <div
+            key={i}
+            className="h-52 w-72 shrink-0 overflow-hidden rounded-2xl lg:h-60 lg:w-80"
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              className="size-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function SpecBlock() {
+  return (
+    <section className="bg-background py-20 lg:py-28 overflow-hidden">
       <div className="mx-auto max-w-7xl px-6">
         <div className="max-w-2xl">
-          <p className="eyebrow">The hardware</p>
-          <h2 className="mt-4 text-brand-cream">
-            What actually goes on the house.
+          <p className="eyebrow">The crew</p>
+          <h2 className="mt-4 text-foreground">
+            Blue collar, elevated.
           </h2>
-          <p className="mt-5 text-base text-brand-cream/70 lg:text-lg">
-            We install {system.brand} — an engineered track system, not a
-            strand of lights stapled to a fascia board.
+          <p className="mt-5 text-base text-muted-foreground lg:text-lg">
+            We show up in a wrapped truck, work clean, and leave the job site the way we found it. The only thing that changes is the house at night.
           </p>
         </div>
+      </div>
 
-        <dl className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
-          {system.specs.map((spec) => (
-            <div key={spec.label} className="bg-[#141C2F] px-6 py-7">
-              <dt className="text-xs tracking-[0.14em] text-brand-cream/40 uppercase">
-                {spec.label}
-              </dt>
-              <dd className="tabular font-display mt-2.5 text-lg font-semibold text-brand-cream">
-                {spec.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+      {/* Angled marquee strip */}
+      <div
+        className="mt-14 space-y-4 lg:mt-16"
+        style={{ transform: "rotate(-3deg)", transformOrigin: "center" }}
+      >
+        <MarqueeRow items={ROW_ONE} direction="right" speed={35} />
+        <MarqueeRow items={ROW_TWO} direction="left"  speed={40} />
       </div>
     </section>
   );
