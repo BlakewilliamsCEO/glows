@@ -14,11 +14,11 @@
 export const site = {
   name: "Glow's Lighting Services",
   tagline: "Permanent outdoor lighting, installed once.",
-  phone: "(317) 555-0100", // TODO: real tracking number, not a cell
-  phoneHref: "tel:+13175550100",
+  phone: "(972) 951-0568",
+  phoneHref: "tel:+19729510568",
   /* Prefilled SMS — outconverts a form on mobile, which is most of the traffic. */
   smsHref:
-    "sms:+13175550100?&body=" +
+    "sms:+19729510568?&body=" +
     encodeURIComponent(
       "Hi — I'd like a quote on permanent lighting for my home.",
     ),

@@ -19,6 +19,13 @@ import { Button } from "@/components/ui/button";
 const f =
   "h-10 w-full rounded-md border border-white/15 bg-white/[0.04] px-3 text-sm text-brand-cream placeholder:text-brand-cream/35 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25";
 
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 export function QuoteForm() {
   const [attribution, setAttribution] = useState<Attribution>({});
   const [interests, setInterests] = useState<string[]>([]);
@@ -111,6 +118,7 @@ export function QuoteForm() {
         <input
           name="phone" type="tel" required autoComplete="tel"
           placeholder="Phone" className={f}
+          onChange={(e) => { e.target.value = formatPhone(e.target.value); }}
           onBlur={(e) => maybePartial("", e.target.value)}
         />
       </div>
