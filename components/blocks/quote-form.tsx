@@ -63,6 +63,7 @@ export function QuoteForm() {
       timeline: String(data.get("timeline") ?? ""),
       hearAbout: String(data.get("hearAbout") ?? ""),
       notes: String(data.get("notes") ?? ""),
+      coverage: String(data.get("coverage") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
@@ -135,6 +136,27 @@ export function QuoteForm() {
           name="zip" required inputMode="numeric" autoComplete="postal-code"
           placeholder="ZIP" className={f}
         />
+      </div>
+
+      {/* Coverage */}
+      <div>
+        <p className="mb-2 text-[0.65rem] font-medium tracking-[0.14em] text-brand-cream/40 uppercase">
+          Which sides of the home?
+        </p>
+        <div className="flex gap-2">
+          {[
+            { value: "front", label: "Front only" },
+            { value: "front-back", label: "Front & back" },
+            { value: "360", label: "360°" },
+          ].map(({ value, label }) => (
+            <label key={value} className="flex-1 cursor-pointer">
+              <input type="radio" name="coverage" value={value} className="sr-only peer" />
+              <span className="block rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-center text-xs font-medium text-brand-cream/60 transition-all peer-checked:border-brand-gold peer-checked:bg-brand-gold/10 peer-checked:text-brand-gold hover:border-white/30">
+                {label}
+              </span>
+            </label>
+          ))}
+        </div>
       </div>
 
       {/* What are you lighting */}
