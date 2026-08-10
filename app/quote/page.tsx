@@ -1,9 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { Phone } from "lucide-react";
 import { site } from "@/lib/config";
 import { QuoteForm } from "@/components/blocks/quote-form";
+import { SiteHeader } from "@/components/blocks/site-header";
 
 export const metadata: Metadata = {
   title: "Get a quote",
@@ -23,24 +22,21 @@ export const metadata: Metadata = {
  */
 export default function QuotePage() {
   return (
-    <div className="dark min-h-screen bg-[#141C2F] lg:grid lg:grid-cols-2">
+    <div className="dark min-h-screen bg-[#141C2F]">
+      <SiteHeader />
+      <div className="lg:grid lg:grid-cols-2">
       {/* ---------- image ---------- */}
       <div className="relative h-48 w-full lg:sticky lg:top-0 lg:h-screen">
-        <Image
-          src="/scenes/accent.jpg"
-          alt="Home in Hamilton County lit along the roofline at night"
-          fill
-          priority
-          sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141C2F]/70 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#141C2F]/40" />
-        <Link
-          href="/"
-          className="absolute top-6 left-6 font-display text-lg font-semibold text-brand-cream"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
         >
-          Glow&rsquo;s<span className="text-brand-gold">.</span>
-        </Link>
+          <source src="/scenes/accent.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141C2F]/70 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#141C2F]/40" />
       </div>
 
       {/* ---------- form ---------- */}
@@ -68,6 +64,7 @@ export default function QuotePage() {
             <QuoteForm />
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
