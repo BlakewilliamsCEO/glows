@@ -24,7 +24,7 @@ export function HeroSceneSwitcher() {
   const [navOpen, setNavOpen] = useState(false);
 
   return (
-    <section className="dark relative isolate w-full">
+    <section className="dark relative isolate flex h-dvh w-full flex-col">
       {/* ---------- background video ---------- */}
       <div className="absolute inset-0 -z-10">
         <video
@@ -40,7 +40,7 @@ export function HeroSceneSwitcher() {
       </div>
 
       {/* ---------- copy ---------- */}
-      <div className="mx-auto flex min-h-[38rem] max-w-7xl flex-col justify-end px-6 pb-8 pt-16 lg:min-h-[42rem] lg:pb-12">
+      <div className="mx-auto flex flex-1 max-w-7xl flex-col justify-end px-6 pb-8 pt-16 lg:pb-12">
         <div className="max-w-2xl">
           <h1 className="text-brand-cream">
             Turn off your porch light.
