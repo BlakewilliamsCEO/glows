@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS prospects (
   coverage      TEXT,
   stories       TEXT,
   structures    TEXT,
+  gables        TEXT,
+  garage        TEXT,
   timeline      TEXT,
   hear_about    TEXT,
   notes         TEXT,

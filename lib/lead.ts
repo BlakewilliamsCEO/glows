@@ -34,6 +34,8 @@ export type QuotePayload = {
   coverage: string;
   stories: string;
   structures: string;
+  gables: string;
+  garage: string;
   smsConsent: boolean;
   attribution: Attribution;
   // Facebook cookie values captured client-side at form submit

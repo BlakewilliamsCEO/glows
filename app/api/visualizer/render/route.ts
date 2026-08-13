@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadRender, uploadSource } from "@/lib/storage";
+import { SCENES, buildRenderPrompt } from "@/lib/scenes";
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 
 export async function POST(req: NextRequest) {
   try {
-    const { image, address } = await req.json();
+    const { image, address, sceneId } = await req.json();
 
     if (!image) {
       return NextResponse.json({ ok: false, error: "No image provided" }, { status: 400 });
@@ -15,7 +16,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "OpenAI API key not configured" }, { status: 500 });
     }
 
-    // If image is a URL (Street View), fetch it and convert to base64
     let imageBase64: string;
     if (image.startsWith("http")) {
       const imgRes = await fetch(image);
@@ -25,9 +25,10 @@ export async function POST(req: NextRequest) {
       imageBase64 = image.replace(/^data:image\/\w+;base64,/, "");
     }
 
-    const prompt = `Editorial architectural photography of this exact house at blue hour, shot on Canon EOS R5 with 24mm tilt-shift lens, f/8, 4-second long exposure. Permanent warm white LED architectural lighting (2700K color temperature) is installed along every visible roofline, eave, peak, gable, and soffit — evenly spaced individual points of light following the exact contours of the existing roof structure. The long exposure creates subtle light bloom around each LED. The sky is deep cobalt blue with visible cloud texture and the last amber traces of sunset on the horizon. The driveway and walkway have a faint wet sheen reflecting the warm glow from the roofline. Landscape is softly lit by ambient spill from the LEDs. All architectural details, windows, siding, landscaping, vehicles, and property features remain exactly as they are — nothing is added or removed except the roofline lighting and the transition to blue hour. The result should look like it belongs in Architectural Digest or Luxe Interiors + Design. No visible wires, no clip marks, no construction evidence.${address ? ` This is ${address}.` : ""}`;
+    // Find the scene or default to warm-white
+    const scene = SCENES.find((s) => s.id === sceneId) ?? SCENES[0];
+    const prompt = buildRenderPrompt(scene, address);
 
-    // Use the Images Edit endpoint with gpt-image-1
     const formData = new FormData();
     const imageBuffer = Buffer.from(imageBase64, "base64");
     const imageBlob = new Blob([imageBuffer], { type: "image/png" });
@@ -59,7 +60,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "No image generated" }, { status: 500 });
     }
 
-    // Persist both source and render to R2
     let imageUrl: string;
     let sourceUrl: string | undefined;
     try {
@@ -67,13 +67,13 @@ export async function POST(req: NextRequest) {
         uploadRender(b64),
         uploadSource(image),
       ]);
-      console.log("[visualizer] saved — source:", sourceUrl, "render:", imageUrl);
+      console.log("[visualizer] saved — scene:", scene.id, "source:", sourceUrl, "render:", imageUrl);
     } catch (uploadErr) {
       console.error("[visualizer] R2 upload failed, falling back to base64:", uploadErr);
       imageUrl = `data:image/png;base64,${b64}`;
     }
 
-    return NextResponse.json({ ok: true, imageUrl, sourceUrl });
+    return NextResponse.json({ ok: true, imageUrl, sourceUrl, sceneId: scene.id });
   } catch (err) {
     console.error("[visualizer] error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });

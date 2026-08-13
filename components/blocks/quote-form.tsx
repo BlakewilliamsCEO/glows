@@ -73,6 +73,8 @@ export function QuoteForm() {
       coverage: String(data.get("coverage") ?? ""),
       stories: String(data.get("stories") ?? ""),
       structures: String(data.get("structures") ?? ""),
+      gables: String(data.get("gables") ?? ""),
+      garage: String(data.get("garage") ?? ""),
       smsConsent: data.get("smsConsent") === "on",
       attribution,
       fbc: attribution.fbc,
