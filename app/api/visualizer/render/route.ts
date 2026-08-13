@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { uploadRender } from "@/lib/storage";
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 
@@ -28,8 +29,6 @@ export async function POST(req: NextRequest) {
 
     // Use the Images Edit endpoint with gpt-image-1
     const formData = new FormData();
-
-    // Convert base64 to a File object
     const imageBuffer = Buffer.from(imageBase64, "base64");
     const imageBlob = new Blob([imageBuffer], { type: "image/png" });
     formData.append("image[]", imageBlob, "house.png");
@@ -60,7 +59,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "No image generated" }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, imageUrl: `data:image/png;base64,${b64}` });
+    // Persist to R2 and return the public URL
+    let imageUrl: string;
+    try {
+      imageUrl = await uploadRender(b64);
+      console.log("[visualizer] render saved to R2:", imageUrl);
+    } catch (uploadErr) {
+      console.error("[visualizer] R2 upload failed, falling back to base64:", uploadErr);
+      imageUrl = `data:image/png;base64,${b64}`;
+    }
+
+    return NextResponse.json({ ok: true, imageUrl });
   } catch (err) {
     console.error("[visualizer] error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
