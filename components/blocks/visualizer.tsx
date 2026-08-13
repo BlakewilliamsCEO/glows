@@ -1,13 +1,75 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Upload, Loader2, ArrowRight } from "lucide-react";
+import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { GlowText } from "@/components/ui/glow-text";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 type Step = "address" | "preview" | "rendering" | "result";
 
 const GOOGLE_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
+
+const RENDER_BEATS = [
+  "You spent hundreds of thousands — or more — on your home.",
+  "Because you had a vision for how your family lives.",
+  "Those experiences deserve the most memorable setting.",
+];
+
+function RenderingSteps() {
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    // Show each beat every 6 seconds
+    for (let i = 1; i < RENDER_BEATS.length; i++) {
+      timers.push(setTimeout(() => setActiveStep(i), i * 6000));
+    }
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center gap-8 text-center">
+      <div className="relative">
+        <Loader2 className="size-10 animate-spin text-brand-gold" />
+        <div className="absolute inset-0 size-10 animate-ping rounded-full bg-brand-gold/20" />
+      </div>
+
+      <div className="min-h-[6rem] flex items-center">
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={activeStep}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="font-display text-xl font-semibold italic text-brand-cream/80 sm:text-2xl lg:text-3xl max-w-lg"
+          >
+            {RENDER_BEATS[activeStep]}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+
+      {/* Step dots */}
+      <div className="flex gap-2">
+        {RENDER_BEATS.map((_, i) => (
+          <div
+            key={i}
+            className={`size-1.5 rounded-full transition-colors duration-500 ${
+              i <= activeStep ? "bg-brand-gold" : "bg-white/15"
+            }`}
+          />
+        ))}
+        <div className="size-1.5 rounded-full bg-white/15 animate-pulse" />
+      </div>
+
+      <p className="text-xs text-brand-cream/30">
+        AI is rendering your home with lights…
+      </p>
+    </div>
+  );
+}
 
 export function Visualizer() {
   const [step, setStep] = useState<Step>("address");
@@ -16,6 +78,7 @@ export function Visualizer() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [renderedImage, setRenderedImage] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [fullScreen, setFullScreen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +89,7 @@ export function Visualizer() {
 
     function initAutocomplete() {
       if (!inputRef.current || !window.google?.maps?.places) return;
-      if (autocompleteRef.current) return; // already initialized
+      if (autocompleteRef.current) return;
 
       autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
         types: ["address"],
@@ -42,16 +105,13 @@ export function Visualizer() {
       });
     }
 
-    // If Google Maps is already loaded, just init
     if (window.google?.maps?.places) {
       initAutocomplete();
       return;
     }
 
-    // Otherwise load the script
     const existing = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
     if (existing) {
-      // Script exists but hasn't loaded yet — wait for it
       existing.addEventListener("load", initAutocomplete);
       return;
     }
@@ -105,15 +165,10 @@ export function Visualizer() {
       const res = await fetch("/api/visualizer/render", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: imageSource,
-          address,
-        }),
+        body: JSON.stringify({ image: imageSource, address }),
       });
 
-      if (!res.ok) {
-        throw new Error("Render failed");
-      }
+      if (!res.ok) throw new Error("Render failed");
 
       const data = await res.json();
       setRenderedImage(data.imageUrl);
@@ -131,80 +186,114 @@ export function Visualizer() {
     setUploadedImage(null);
     setRenderedImage(null);
     setError("");
+    setFullScreen(false);
   };
 
-  return (
-    <div className="mx-auto max-w-3xl px-6">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-brand-cream">
-          See your home{" "}
-          <span className="text-brand-gold"><GlowText>lit.</GlowText></span>
-        </h1>
-        <p className="mt-4 text-base text-brand-cream/60 lg:text-lg">
-          Enter your address or upload a photo. We&rsquo;ll show you what permanent lighting looks like on your home — free, instant.
-        </p>
+  // ---------- Full-screen result ----------
+  if (step === "result" && renderedImage && fullScreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+        <img
+          src={renderedImage}
+          alt="Your home with permanent lighting"
+          className="max-h-full max-w-full object-contain"
+        />
+        <button
+          type="button"
+          onClick={() => setFullScreen(false)}
+          className="absolute top-6 right-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20"
+        >
+          <Minimize2 className="size-4" />
+          Back
+        </button>
       </div>
+    );
+  }
 
-      {/* Step: Address input */}
+  return (
+    <div className="mx-auto max-w-7xl px-6">
+
+      {/* ---------- ADDRESS STEP ---------- */}
       {step === "address" && (
-        <div className="mt-12 space-y-6">
-          {/* Address search */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-brand-cream/50">
-              Search your address
-            </label>
+        <div className="mx-auto max-w-xl">
+          <div className="text-center">
+            <h1 className="text-brand-cream">
+              See your home{" "}
+              <span className="text-brand-gold"><GlowText>lit.</GlowText></span>
+            </h1>
+            <p className="mt-4 text-base text-brand-cream/50 lg:text-lg">
+              Type your address. We&rsquo;ll pull up your home and show you what it looks like with permanent lighting — free, in&nbsp;seconds.
+            </p>
+          </div>
+
+          <div className="mt-12 space-y-6">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-brand-cream/30" />
+              <MapPin className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-brand-cream/30" />
               <input
                 ref={inputRef}
                 type="text"
                 placeholder="Start typing your address…"
-                className="h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] pl-10 pr-4 text-sm text-brand-cream placeholder:text-brand-cream/30 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25"
+                className="h-14 w-full rounded-xl border border-white/15 bg-white/[0.04] pl-11 pr-4 text-base text-brand-cream placeholder:text-brand-cream/30 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25"
               />
             </div>
+
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="text-xs text-brand-cream/25 uppercase tracking-widest">or</span>
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.02] px-6 py-8 text-brand-cream/40 transition-colors hover:border-brand-gold/40 hover:text-brand-cream/60"
+            >
+              <Upload className="size-5" />
+              <span className="text-sm font-medium">Upload a photo of your home</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleUpload}
+            />
+
+            {error && <p className="text-sm text-red-400">{error}</p>}
           </div>
-
-          <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-white/10" />
-            <span className="text-xs text-brand-cream/30 uppercase tracking-widest">or</span>
-            <div className="h-px flex-1 bg-white/10" />
-          </div>
-
-          {/* Upload */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-dashed border-white/15 bg-white/[0.02] px-6 py-8 text-brand-cream/50 transition-colors hover:border-brand-gold/40 hover:text-brand-cream/70"
-          >
-            <Upload className="size-5" />
-            <span className="text-sm font-medium">Upload a photo of your home</span>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleUpload}
-          />
-
-          {error && <p className="text-sm text-red-400">{error}</p>}
         </div>
       )}
 
-      {/* Step: Preview */}
+      {/* ---------- PREVIEW STEP ---------- */}
       {step === "preview" && (
-        <div className="mt-12 space-y-6">
-          <div className="overflow-hidden rounded-xl border border-white/10">
-            <img
-              src={uploadedImage || streetViewUrl}
-              alt="Your home"
-              className="w-full"
-            />
+        <div className="mx-auto max-w-2xl space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-semibold text-brand-cream">Is this your home?</h2>
           </div>
 
+          <BorderRotate
+            animationSpeed={6}
+            borderWidth={3}
+            borderRadius={16}
+            backgroundColor="#141C2F"
+            gradientColors={{
+              primary: "#584827",
+              secondary: "#E7B969",
+              accent: "#f9de90",
+            }}
+            className="w-full"
+          >
+            <div className="overflow-hidden rounded-[13px]">
+              <img
+                src={uploadedImage || streetViewUrl}
+                alt="Your home"
+                className="w-full"
+              />
+            </div>
+          </BorderRotate>
+
           {address && (
-            <p className="text-center text-sm text-brand-cream/50">{address}</p>
+            <p className="text-center text-sm text-brand-cream/40">{address}</p>
           )}
 
           <div className="flex justify-center gap-3">
@@ -221,46 +310,82 @@ export function Visualizer() {
         </div>
       )}
 
-      {/* Step: Rendering */}
+      {/* ---------- RENDERING STEP ---------- */}
       {step === "rendering" && (
-        <div className="mt-24 flex flex-col items-center gap-4 text-center">
-          <Loader2 className="size-8 animate-spin text-brand-gold" />
-          <p className="text-brand-cream/70">
-            AI is rendering your home with lights — this takes about 30 seconds…
-          </p>
+        <div className="flex min-h-[24rem] items-center justify-center">
+          <RenderingSteps />
         </div>
       )}
 
-      {/* Step: Result */}
+      {/* ---------- RESULT STEP ---------- */}
       {step === "result" && renderedImage && (
-        <div className="mt-12 space-y-6">
-          <div className="overflow-hidden rounded-xl border border-brand-gold/30">
-            <img
-              src={renderedImage}
-              alt="Your home with permanent lighting"
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
+          {/* Left: rendered image — 2/3 */}
+          <div className="lg:w-2/3">
+            <BorderRotate
+              animationSpeed={6}
+              borderWidth={3}
+              borderRadius={16}
+              backgroundColor="#141C2F"
+              gradientColors={{
+                primary: "#584827",
+                secondary: "#E7B969",
+                accent: "#f9de90",
+              }}
               className="w-full"
-            />
+            >
+              <div className="overflow-hidden rounded-[13px]">
+                <motion.img
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
+                  src={renderedImage}
+                  alt="Your home with permanent lighting"
+                  className="w-full"
+                />
+              </div>
+            </BorderRotate>
           </div>
 
-          <div className="text-center">
-            <p className="text-lg font-semibold text-brand-cream">
-              This is your home with Glows.
-            </p>
-            <p className="mt-1 text-sm text-brand-cream/50">
-              Ready to make it real? Get a free measure and quote.
-            </p>
-          </div>
+          {/* Right: copy — 1/3 */}
+          <div className="flex flex-col justify-center lg:w-1/3">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="space-y-6"
+            >
+              <h2 className="font-display text-3xl font-semibold italic text-brand-cream lg:text-4xl">
+                This is your home with{" "}
+                <span className="text-brand-gold"><GlowText>Glows.</GlowText></span>
+              </h2>
 
-          <div className="flex justify-center gap-3">
-            <Button variant="outline" onClick={reset}>
-              Try another
-            </Button>
-            <Button asChild size="lg">
-              <a href="/quote">
-                Get my quote
-                <ArrowRight className="ml-2 size-4" />
-              </a>
-            </Button>
+              <p className="text-sm leading-relaxed text-brand-cream/50">
+                Permanent architectural lighting — installed once, controlled from your phone, built to last. No ladders. No storage bins. No seasonal takedown.
+              </p>
+
+              <div className="space-y-3 border-t border-white/10 pt-6">
+                <Button asChild size="lg" className="w-full">
+                  <a href="/quote">
+                    Get a free quote
+                    <ArrowRight className="ml-2 size-4" />
+                  </a>
+                </Button>
+
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1" onClick={reset}>
+                    Try another home
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setFullScreen(true)}
+                    aria-label="View full screen"
+                  >
+                    <Maximize2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       )}
