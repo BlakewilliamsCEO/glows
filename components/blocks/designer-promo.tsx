@@ -20,7 +20,7 @@ export function DesignerPromo() {
         <div className="text-center">
           <h2 className="text-brand-cream">
             See your home in{" "}
-            <span className="text-brand-gold"><GlowText>Glow&rsquo;s lights.</GlowText></span>
+            <span className="text-brand-gold"><GlowText>Glow&rsquo;s lights</GlowText></span> — free.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-brand-cream/50 lg:text-lg">
             Enter your address and see what permanent lighting looks like on your home — no appointment, no waiting, no cost.
@@ -42,23 +42,15 @@ export function DesignerPromo() {
 
         {/* Sample render + estimate */}
         <div className="mt-14 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
-          {/* Sample image */}
+          {/* Sample video */}
           <div className="w-full lg:w-3/5">
             <div className="overflow-hidden rounded-2xl border border-white/10">
-              <img
-                src="/scenes/accent.mp4"
-                alt="Sample home with permanent lighting"
-                className="w-full"
-                style={{ aspectRatio: "3/2", objectFit: "cover" }}
-              />
-              {/* Fallback: use a video still or rendered image once available */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full"
-                style={{ aspectRatio: "3/2", objectFit: "cover" }}
+                className="block w-full"
               >
                 <source src="/scenes/accent.mp4" type="video/mp4" />
               </video>
