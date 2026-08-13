@@ -192,16 +192,16 @@ export function Visualizer() {
   // ---------- Full-screen result ----------
   if (step === "result" && renderedImage && fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+      <div className="fixed inset-0 z-50">
         <img
           src={renderedImage}
           alt="Your home with permanent lighting"
-          className="max-h-full max-w-full object-contain"
+          className="h-full w-full object-cover"
         />
         <button
           type="button"
           onClick={() => setFullScreen(false)}
-          className="absolute top-6 right-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/20"
+          className="absolute top-6 right-6 flex items-center gap-2 rounded-lg bg-black/40 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-black/60"
         >
           <Minimize2 className="size-4" />
           Back
@@ -379,9 +379,9 @@ export function Visualizer() {
                   <Button
                     variant="outline"
                     onClick={() => setFullScreen(true)}
-                    aria-label="View full screen"
                   >
                     <Maximize2 className="size-4" />
+                    Full screen
                   </Button>
                 </div>
               </div>
