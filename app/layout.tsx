@@ -32,6 +32,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
+      <head>
+        <meta name="facebook-domain-verification" content="a4zqqfyy0c2wqu8ni2qw84rmtm4pt7" />
+      </head>
       <body>
         <ScrollReveal />
         {children}
