@@ -44,7 +44,7 @@ export function DesignerPromo() {
         <div className="mt-14 flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
           {/* Sample video */}
           <div className="w-full lg:w-3/5">
-            <div className="overflow-hidden rounded-2xl border border-white/10">
+            <Link href="/visualizer" className="group relative block overflow-hidden rounded-2xl border border-white/10">
               <video
                 autoPlay
                 loop
@@ -54,7 +54,12 @@ export function DesignerPromo() {
               >
                 <source src="/scenes/accent.mp4" type="video/mp4" />
               </video>
-            </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/40">
+                <span className="rounded-xl bg-brand-gold px-8 py-3 font-display text-lg font-semibold text-[#141C2F] opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 scale-90">
+                  Try it now
+                </span>
+              </div>
+            </Link>
           </div>
 
           {/* Sample estimate card */}
