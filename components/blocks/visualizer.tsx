@@ -24,14 +24,14 @@ export function Visualizer() {
   useEffect(() => {
     if (!GOOGLE_KEY) return;
 
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places`;
-    script.async = true;
-    script.onload = () => {
-      if (!inputRef.current) return;
+    function initAutocomplete() {
+      if (!inputRef.current || !window.google?.maps?.places) return;
+      if (autocompleteRef.current) return; // already initialized
+
       autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
         types: ["address"],
         componentRestrictions: { country: "us" },
+        fields: ["formatted_address", "geometry"],
       });
       autocompleteRef.current.addListener("place_changed", () => {
         const place = autocompleteRef.current?.getPlace();
@@ -40,12 +40,27 @@ export function Visualizer() {
           handleAddressSelect(place);
         }
       });
-    };
-    document.head.appendChild(script);
+    }
 
-    return () => {
-      script.remove();
-    };
+    // If Google Maps is already loaded, just init
+    if (window.google?.maps?.places) {
+      initAutocomplete();
+      return;
+    }
+
+    // Otherwise load the script
+    const existing = document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]');
+    if (existing) {
+      // Script exists but hasn't loaded yet — wait for it
+      existing.addEventListener("load", initAutocomplete);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=places`;
+    script.async = true;
+    script.onload = initAutocomplete;
+    document.head.appendChild(script);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
