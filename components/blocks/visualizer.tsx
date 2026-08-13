@@ -211,7 +211,7 @@ export function Visualizer() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6">
+    <div className="mx-auto max-w-[90rem] px-6">
 
       {/* ---------- ADDRESS STEP ---------- */}
       {step === "address" && (
@@ -320,8 +320,8 @@ export function Visualizer() {
       {/* ---------- RESULT STEP ---------- */}
       {step === "result" && renderedImage && (
         <div className="flex flex-col gap-8 lg:flex-row lg:gap-10">
-          {/* Left: rendered image — 2/3 */}
-          <div className="lg:w-2/3">
+          {/* Left: rendered image — 3/4 */}
+          <div className="lg:w-3/4">
             <BorderRotate
               animationSpeed={6}
               borderWidth={3}
@@ -348,7 +348,7 @@ export function Visualizer() {
           </div>
 
           {/* Right: copy — 1/3 */}
-          <div className="flex flex-col justify-center lg:w-1/3">
+          <div className="flex flex-col justify-center lg:w-1/4">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
