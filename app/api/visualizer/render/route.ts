@@ -19,68 +19,48 @@ export async function POST(req: NextRequest) {
     if (image.startsWith("http")) {
       const imgRes = await fetch(image);
       const buffer = await imgRes.arrayBuffer();
-      imageBase64 = `data:image/jpeg;base64,${Buffer.from(buffer).toString("base64")}`;
+      imageBase64 = Buffer.from(buffer).toString("base64");
     } else {
-      // Already a data URL from file upload
-      imageBase64 = image;
+      imageBase64 = image.replace(/^data:image\/\w+;base64,/, "");
     }
 
-    // Use GPT-4o image generation to render the home with lights
-    const res = await fetch("https://api.openai.com/v1/responses", {
+    const prompt = `Transform this daytime photo of a house into a photorealistic nighttime/dusk scene with permanent LED architectural lighting installed along all visible rooflines, eaves, peaks, and gables. The lights should be warm white (2700K color temperature), evenly spaced, and follow the exact contours of the existing roof structure. The house structure, landscaping, driveway, and all architectural details must remain exactly the same — only add the lighting and change the sky to dusk/night. Make it look like a real photo taken at twilight, not a rendering. The lighting should cast a subtle warm glow on the fascia and soffit.${address ? ` This is ${address}.` : ""}`;
+
+    // Use the Images Edit endpoint with gpt-image-1
+    const formData = new FormData();
+
+    // Convert base64 to a File object
+    const imageBuffer = Buffer.from(imageBase64, "base64");
+    const imageBlob = new Blob([imageBuffer], { type: "image/png" });
+    formData.append("image[]", imageBlob, "house.png");
+    formData.append("prompt", prompt);
+    formData.append("model", "gpt-image-1");
+    formData.append("size", "1536x1024");
+    formData.append("quality", "high");
+
+    const res = await fetch("https://api.openai.com/v1/images/edits", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${OPENAI_KEY}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        input: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "input_image",
-                image_url: imageBase64,
-              },
-              {
-                type: "input_text",
-                text: `Transform this daytime photo of a house into a photorealistic nighttime/dusk scene with permanent LED architectural lighting installed along all visible rooflines, eaves, peaks, and gables. The lights should be warm white (2700K color temperature), evenly spaced, and follow the exact contours of the existing roof structure. The house structure, landscaping, driveway, and all architectural details must remain exactly the same — only add the lighting and change the sky to dusk/night. Make it look like a real photo taken at twilight, not a rendering. The lighting should cast a subtle warm glow on the fascia and soffit.${address ? ` This is ${address}.` : ""}`,
-              },
-            ],
-          },
-        ],
-        tools: [
-          {
-            type: "image_generation",
-            quality: "high",
-            size: "1536x1024",
-          },
-        ],
-      }),
+      body: formData,
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      console.error("[visualizer] OpenAI error:", err);
+      const errText = await res.text();
+      console.error("[visualizer] OpenAI edits error:", res.status, errText);
       return NextResponse.json({ ok: false, error: "Render failed" }, { status: 500 });
     }
 
     const data = await res.json();
+    const b64 = data.data?.[0]?.b64_json;
 
-    // Extract the generated image from the response
-    const imageOutput = data.output?.find(
-      (item: { type: string }) => item.type === "image_generation_call",
-    );
-
-    if (!imageOutput?.result) {
-      console.error("[visualizer] No image in response:", JSON.stringify(data));
+    if (!b64) {
+      console.error("[visualizer] No image in response:", JSON.stringify(data).slice(0, 500));
       return NextResponse.json({ ok: false, error: "No image generated" }, { status: 500 });
     }
 
-    // Return the base64 image as a data URL
-    const resultUrl = `data:image/png;base64,${imageOutput.result}`;
-
-    return NextResponse.json({ ok: true, imageUrl: resultUrl });
+    return NextResponse.json({ ok: true, imageUrl: `data:image/png;base64,${b64}` });
   } catch (err) {
     console.error("[visualizer] error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
