@@ -62,6 +62,15 @@ export async function POST(req: NextRequest) {
     const prospect = result.rows[0];
     console.log("[quote] prospect created:", prospect.id);
 
+    // Link any visualizer leads that match this address
+    const fullAddress = `${payload.street}, ${payload.city}`;
+    await query(
+      `UPDATE visualizer_leads SET prospect_id = $1
+       WHERE prospect_id IS NULL
+         AND address ILIKE '%' || $2 || '%'`,
+      [prospect.id, fullAddress],
+    ).catch((err) => console.error("[quote] visualizer link error:", err));
+
     return NextResponse.json({ ok: true, id: prospect.id });
   } catch (err) {
     console.error("[quote] error:", err);

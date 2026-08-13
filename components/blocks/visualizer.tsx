@@ -140,6 +140,16 @@ export function Visualizer() {
     setUploadedImage(null);
     setStep("preview");
     setError("");
+
+    // Capture the address
+    if (place.formatted_address) {
+      fetch("/api/visualizer/capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: place.formatted_address }),
+        keepalive: true,
+      }).catch(() => {});
+    }
   }, []);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

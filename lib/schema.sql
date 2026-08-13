@@ -85,7 +85,20 @@ CREATE TABLE IF NOT EXISTS prospect_partials (
   referrer      TEXT
 );
 
+-- ─── visualizer_leads ─────────────────────────────────────────────────────────
+-- Every address entered in the visualizer. When they later submit a quote,
+-- we match on address and link the prospect_id.
+
+CREATE TABLE IF NOT EXISTS visualizer_leads (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at    TIMESTAMPTZ NOT NULL    DEFAULT NOW(),
+  address       TEXT        NOT NULL,
+  prospect_id   UUID        REFERENCES prospects(id)
+);
+
 -- ─── indexes ──────────────────────────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS viz_leads_created   ON visualizer_leads (created_at DESC);
+CREATE INDEX IF NOT EXISTS viz_leads_address   ON visualizer_leads (address);
 CREATE INDEX IF NOT EXISTS prospects_email       ON prospects (email);
 CREATE INDEX IF NOT EXISTS prospects_phone       ON prospects (phone);
 CREATE INDEX IF NOT EXISTS prospects_created_at  ON prospects (created_at DESC);
