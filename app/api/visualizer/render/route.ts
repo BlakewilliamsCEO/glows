@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploadRender } from "@/lib/storage";
+import { uploadRender, uploadSource } from "@/lib/storage";
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 
@@ -59,17 +59,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "No image generated" }, { status: 500 });
     }
 
-    // Persist to R2 and return the public URL
+    // Persist both source and render to R2
     let imageUrl: string;
+    let sourceUrl: string | undefined;
     try {
-      imageUrl = await uploadRender(b64);
-      console.log("[visualizer] render saved to R2:", imageUrl);
+      [imageUrl, sourceUrl] = await Promise.all([
+        uploadRender(b64),
+        uploadSource(image),
+      ]);
+      console.log("[visualizer] saved — source:", sourceUrl, "render:", imageUrl);
     } catch (uploadErr) {
       console.error("[visualizer] R2 upload failed, falling back to base64:", uploadErr);
       imageUrl = `data:image/png;base64,${b64}`;
     }
 
-    return NextResponse.json({ ok: true, imageUrl });
+    return NextResponse.json({ ok: true, imageUrl, sourceUrl });
   } catch (err) {
     console.error("[visualizer] error:", err);
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
