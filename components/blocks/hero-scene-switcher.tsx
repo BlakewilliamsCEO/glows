@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { site, systemStats } from "@/lib/config";
 import { CountUp } from "@/components/ui/count-up";
 import { GlowText } from "@/components/ui/glow-text";
+import { SmokyButton } from "@/components/ui/smoky-button";
 import { NavBar } from "@/components/blocks/site-header";
 
 /** "800+" → { value: 800, suffix: "+" } · "16M+" → { value: 16, suffix: "M+" } */
@@ -43,6 +46,20 @@ export function HeroSceneSwitcher() {
           <p className="mt-6 max-w-xl text-base text-brand-cream/75 lg:text-lg">
             Permanent architectural lighting for your home — invisible by day, stunning by night.
           </p>
+
+          {/* ---------- CTAs ---------- */}
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+            <Link href={site.ctaHref}>
+              <SmokyButton>{site.cta}</SmokyButton>
+            </Link>
+            <Link
+              href="/visualizer"
+              className="group flex items-center gap-2 rounded-lg border border-brand-cream/25 bg-white/[0.06] px-6 py-3 text-base font-semibold text-brand-cream backdrop-blur-sm transition-all hover:border-brand-gold/50 hover:bg-white/[0.1]"
+            >
+              See your home lit up
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
 
           {/* ---------- stats ---------- */}
           <div className="mt-12 lg:mt-16">
