@@ -520,7 +520,7 @@ export function Visualizer() {
 
           <form onSubmit={handleGateSubmit} className="mt-6">
             {/* Stories */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">How many stories?</p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">How many stories?</p>
             <div className="flex gap-2 mb-3">
               <SegButton selected={stories === "1"} onClick={() => setStories("1")}>1</SegButton>
               <SegButton selected={stories === "2"} onClick={() => setStories("2")} popular>2</SegButton>
@@ -528,14 +528,14 @@ export function Visualizer() {
             </div>
 
             {/* Gables */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Roofline peaks and gables</p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">Roofline peaks and gables</p>
             <OptionButton selected={gables === "simple"} onClick={() => setGables("simple")}>Simple (1&ndash;2)</OptionButton>
             <OptionButton selected={gables === "average"} onClick={() => setGables("average")} popular>Average (3&ndash;4)</OptionButton>
             <OptionButton selected={gables === "complex"} onClick={() => setGables("complex")}>Complex (5+)</OptionButton>
             <OptionButton selected={gables === "unsure"} onClick={() => setGables("unsure")}>Not sure</OptionButton>
 
             {/* Garage */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Attached garage?</p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">Attached garage?</p>
             <div className="flex gap-2 mb-3">
               <SegButton selected={garage === "yes"} onClick={() => setGarage("yes")} popular>Yes</SegButton>
               <SegButton selected={garage === "no"} onClick={() => setGarage("no")}>No</SegButton>
@@ -543,19 +543,19 @@ export function Visualizer() {
             </div>
 
             {/* Coverage */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Where should the lights run?</p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">Where should the lights run?</p>
             <OptionButton selected={coverage === "front"} onClick={() => setCoverage("front")}>Front only</OptionButton>
             <OptionButton selected={coverage === "front-sides"} onClick={() => setCoverage("front-sides")} popular>Front &amp; sides</OptionButton>
             <OptionButton selected={coverage === "full"} onClick={() => setCoverage("full")}>Full perimeter</OptionButton>
 
             {/* Extras */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Anything else to light? <span className="font-normal text-[#6B7280]">(optional, pick any)</span></p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">Anything else to light? <span className="font-normal text-[#6B7280]">(optional, pick any)</span></p>
             {EXTRAS_OPTIONS.map((opt) => (
               <OptionButton key={opt.value} selected={extras.includes(opt.value)} onClick={() => toggleExtra(opt.value)} multi>{opt.label}</OptionButton>
             ))}
 
             {/* Timeline */}
-            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Timeline</p>
+            <p className="text-base font-bold text-[#0F1420] mb-3 mt-6">Timeline</p>
             <OptionButton selected={timeline === "asap"} onClick={() => setTimeline("asap")}>ASAP</OptionButton>
             <OptionButton selected={timeline === "holidays"} onClick={() => setTimeline("holidays")} popular>Before the holidays</OptionButton>
             <OptionButton selected={timeline === "spring"} onClick={() => setTimeline("spring")}>Next spring</OptionButton>
