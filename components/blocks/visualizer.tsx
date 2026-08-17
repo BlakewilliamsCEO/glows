@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check } from "lucide-react";
+import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import Cal, { getCalApi } from "@calcom/embed-react";
 import { SCENES } from "@/lib/scenes";
 import { calculateEstimate, type Estimate } from "@/lib/pricing";
 
@@ -66,6 +67,7 @@ export function Visualizer() {
   const [tickerIndex, setTickerIndex] = useState(0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [stickySmall, setStickySmall] = useState(false);
+  const [showCal, setShowCal] = useState(false);
 
   // Gate form state
   const [stories, setStories] = useState("");
@@ -665,22 +667,52 @@ export function Visualizer() {
               </div>
             </div>
 
-            {/* CTAs */}
-            <button
-              type="button"
-              onClick={reset}
-              className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold"
-            >
-              Book your free measure
-            </button>
+            {/* CTA + Inline Cal.com booking */}
+            {!showCal ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setShowCal(true)}
+                  className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold flex items-center justify-center gap-2"
+                >
+                  <Calendar className="size-5" />
+                  Book a Glows Lighting Design Consult
+                </button>
 
-            <button
-              type="button"
-              onClick={tryAnotherScene}
-              className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
-            >
-              Try another scene
-            </button>
+                <button
+                  type="button"
+                  onClick={tryAnotherScene}
+                  className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
+                >
+                  Try another scene
+                </button>
+              </>
+            ) : (
+              <div className="mt-8">
+                <h2 className="text-[20px] font-semibold text-[#0F1420] text-center mb-4">
+                  Pick a time that works for you.
+                </h2>
+                <Cal
+                  calLink="get-glows-lights/30min"
+                  config={{
+                    name: fullName,
+                    email: email,
+                    phone: phone.replace(/\D/g, ""),
+                    notes: `Address: ${address}\nScene: ${selectedScene}\nStories: ${stories}\nCoverage: ${COVERAGE_LABELS[coverage] || coverage}\nGables: ${gables}\nGarage: ${garage}\nEstimate: ${estimate ? formatCurrency(estimate.mid) : "N/A"}`,
+                    layout: "month_view",
+                    theme: "light",
+                  }}
+                  style={{ width: "100%", height: "100%", overflow: "auto" }}
+                />
+                <button
+                  type="button"
+                  onClick={tryAnotherScene}
+                  className="block w-full text-center text-[15px] text-[#6B7280] mt-6 cursor-pointer"
+                >
+                  Try another scene instead
+                </button>
+              </div>
+            )}
           </motion.div>
         </section>
       )}
