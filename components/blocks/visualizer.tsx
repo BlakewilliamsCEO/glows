@@ -328,7 +328,7 @@ export function Visualizer() {
 
       {/* Logo */}
       <div className="text-center mb-6">
-        <span className="font-display text-2xl font-semibold italic tracking-tight text-[#14213D]">
+        <span className="font-display text-3xl font-semibold italic tracking-tight text-[#14213D]">
           Glows<span className="text-[#D4A017] not-italic">.</span>
         </span>
         <span className="block text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-[#6B7280]">
