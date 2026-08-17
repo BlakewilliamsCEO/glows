@@ -67,7 +67,7 @@ export function Visualizer() {
   const [tickerIndex, setTickerIndex] = useState(0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [stickySmall, setStickySmall] = useState(false);
-  const [showCal, setShowCal] = useState(false);
+  const [showQuote, setShowQuote] = useState(false);
 
   // Gate form state
   const [stories, setStories] = useState("");
@@ -321,6 +321,16 @@ export function Visualizer() {
 
   return (
     <div className="px-5 pb-16 pt-5 max-w-[560px] mx-auto md:my-8 md:border md:border-[#E3E6EC] md:rounded-2xl md:px-10 md:py-10">
+
+      {/* Logo */}
+      <div className="text-center mb-6">
+        <span className="font-display text-2xl font-semibold italic tracking-tight text-[#14213D]">
+          Glows<span className="text-[#D4A017] not-italic">.</span>
+        </span>
+        <span className="block text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-[#6B7280]">
+          Permanent Lighting
+        </span>
+      </div>
 
       {/* Progress bar */}
       <div className="flex gap-1 mb-6">
@@ -606,92 +616,89 @@ export function Visualizer() {
             </button>
           </div>
 
-          {/* Pricing */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.5 }}>
-            <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] mt-6 md:text-[32px] md:leading-[1.2]">
-              Your estimate
-            </h1>
-            <p className="text-base text-[#6B7280] text-center mt-3">
-              Or as low as {formatCurrency(estimate.monthlyLow)}/mo with 0% financing.
-            </p>
+          {/* CTA to reveal quote */}
+          {!showQuote && (
+            <button
+              type="button"
+              onClick={() => setShowQuote(true)}
+              className="w-full h-14 mt-6 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold flex items-center justify-center gap-2"
+            >
+              See your personalized quote <ArrowRight className="size-4" />
+            </button>
+          )}
 
-            <div className="mt-6 space-y-3">
-              {/* Low */}
-              <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
-                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">Low</p>
-                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
-                  {formatCurrency(estimate.monthlyLow)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
-                </p>
-                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.low)} total</p>
-              </div>
+          {/* Quote + Calendar (revealed after CTA tap) */}
+          {showQuote && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 
-              {/* Mid (featured) */}
-              <div className="rounded-xl border-2 border-[#14213D] p-5 text-center relative mt-5">
-                <span className="absolute -top-[10px] left-1/2 -translate-x-1/2 bg-[#14213D] text-white text-xs px-3 py-1 rounded-full">Most homes</span>
-                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">Estimate</p>
-                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
-                  {formatCurrency(estimate.monthlyMid)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
-                </p>
-                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.mid)} total</p>
-              </div>
-
-              {/* High */}
-              <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
-                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">High</p>
-                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
-                  {formatCurrency(estimate.monthlyHigh)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
-                </p>
-                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.high)} total</p>
-              </div>
-            </div>
-
-            <p className="text-[13px] text-[#6B7280] leading-relaxed mt-4">
-              Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
-              <br /><br />
-              Based on approximately {estimate.linearFeet} ft of roofline, {stories} {Number(stories) === 1 ? "story" : "stories"}, {COVERAGE_LABELS[coverage] || coverage}.
-            </p>
-
-            {/* Accuracy block */}
-            <div className="bg-[#F6F7F9] rounded-xl p-5 mt-6">
-              <h2 className="text-[17px] font-semibold text-[#0F1420] leading-snug">
-                This is an estimate. The real number comes from your driveway.
-              </h2>
-              <p className="text-[15px] leading-relaxed text-[#6B7280] mt-2.5">
-                Rooflines hide things satellites can&rsquo;t see &mdash; soffit depth, fascia condition, where power actually runs. A 20-minute walkthrough gets you an exact price.
+              {/* Pricing */}
+              <h1 className="text-[28px] leading-[1.25] font-bold text-center text-[#0F1420] mt-8 md:text-[32px] md:leading-[1.2]">
+                Your Estimate
+              </h1>
+              <p className="text-base text-[#6B7280] text-center mt-3">
+                Or as low as {formatCurrency(estimate.monthlyLow)}/mo with 0% financing.
               </p>
-              <div className="mt-3 space-y-3">
-                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Exact pricing</span></div>
-                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Flexible financing</span></div>
-                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>We&rsquo;ll show you the app</span></div>
-                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Free, no obligation</span></div>
+
+              <div className="mt-6 space-y-3">
+                {/* Low */}
+                <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
+                  <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#6B7280]">Low</p>
+                  <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                    {formatCurrency(estimate.monthlyLow)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                  </p>
+                  <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.low)} total</p>
+                </div>
+
+                {/* Mid (featured) */}
+                <div className="rounded-xl border-2 border-[#14213D] p-5 text-center relative mt-5">
+                  <span className="absolute -top-[10px] left-1/2 -translate-x-1/2 bg-[#14213D] text-white text-xs font-bold px-3 py-1 rounded-full">Most homes</span>
+                  <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#6B7280]">Estimate</p>
+                  <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                    {formatCurrency(estimate.monthlyMid)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                  </p>
+                  <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.mid)} total</p>
+                </div>
+
+                {/* High */}
+                <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
+                  <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#6B7280]">High</p>
+                  <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                    {formatCurrency(estimate.monthlyHigh)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                  </p>
+                  <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.high)} total</p>
+                </div>
               </div>
-            </div>
 
-            {/* CTA + Inline Cal.com booking */}
-            {!showCal ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setShowCal(true)}
-                  className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold flex items-center justify-center gap-2"
-                >
-                  <Calendar className="size-5" />
-                  Book a Glows Lighting Design Consult
-                </button>
+              <p className="text-[13px] text-[#6B7280] leading-relaxed mt-4">
+                Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
+                <br /><br />
+                Based on approximately {estimate.linearFeet} ft of roofline, {stories} {Number(stories) === 1 ? "story" : "stories"}, {COVERAGE_LABELS[coverage] || coverage}.
+              </p>
 
-                <button
-                  type="button"
-                  onClick={tryAnotherScene}
-                  className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
-                >
-                  Try another scene
-                </button>
-              </>
-            ) : (
-              <div className="mt-8">
-                <h2 className="text-[20px] font-semibold text-[#0F1420] text-center mb-4">
-                  Pick a time that works for you.
+              {/* Accuracy block */}
+              <div className="bg-[#F6F7F9] rounded-xl p-5 mt-6">
+                <h2 className="text-[18px] font-bold text-[#0F1420] leading-snug">
+                  This is an estimate. The real number comes from your driveway.
                 </h2>
+                <p className="text-[15px] leading-relaxed text-[#6B7280] mt-2.5">
+                  Rooflines hide things satellites can&rsquo;t see &mdash; soffit depth, fascia condition, where power actually runs. A 20-minute walkthrough gets you an exact price.
+                </p>
+                <div className="mt-3 space-y-3">
+                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Exact pricing</strong></span></div>
+                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Flexible financing</strong></span></div>
+                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>We&rsquo;ll show you the app</strong></span></div>
+                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Free, no obligation</strong></span></div>
+                </div>
+              </div>
+
+              {/* Inline Cal.com booking — always visible */}
+              <div className="mt-10">
+                <h2 className="text-[24px] font-bold text-[#0F1420] text-center leading-snug md:text-[28px]">
+                  Pick a day &amp; time for your design consult.
+                </h2>
+                <p className="text-base text-[#6B7280] text-center mt-2 mb-6">
+                  30 minutes, free, no obligation.
+                </p>
                 <Cal
                   calLink="get-glows-lights/30min"
                   config={{
@@ -704,16 +711,17 @@ export function Visualizer() {
                   }}
                   style={{ width: "100%", height: "100%", overflow: "auto" }}
                 />
-                <button
-                  type="button"
-                  onClick={tryAnotherScene}
-                  className="block w-full text-center text-[15px] text-[#6B7280] mt-6 cursor-pointer"
-                >
-                  Try another scene instead
-                </button>
               </div>
-            )}
-          </motion.div>
+
+              <button
+                type="button"
+                onClick={tryAnotherScene}
+                className="block w-full text-center text-[15px] text-[#6B7280] mt-6 cursor-pointer"
+              >
+                Try another scene
+              </button>
+            </motion.div>
+          )}
         </section>
       )}
     </div>
