@@ -282,17 +282,20 @@ export function Visualizer() {
   }
 
   // ---------- Shared UI helpers ----------
-  const OptionButton = ({ selected, onClick, children, multi = false }: { selected: boolean; onClick: () => void; children: React.ReactNode; multi?: boolean }) => (
+  const OptionButton = ({ selected, onClick, children, multi = false, popular = false }: { selected: boolean; onClick: () => void; children: React.ReactNode; multi?: boolean; popular?: boolean }) => (
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center justify-between min-h-[60px] px-5 mb-3 rounded-xl border text-left text-base font-medium transition-all ${
+      className={`relative flex w-full items-center justify-between min-h-[60px] px-5 mb-3 rounded-xl border text-left text-base font-medium transition-all ${
         selected
           ? "border-2 border-[#14213D] text-[#14213D]"
           : "border-[#E3E6EC] text-[#0F1420] hover:border-[#C5C9D2]"
       }`}
     >
-      <span>{children}</span>
+      <span className="flex items-center gap-2.5">
+        {children}
+        {popular && <span className="text-[11px] font-semibold uppercase tracking-wide text-[#D4A017] bg-[#D4A017]/10 px-2 py-0.5 rounded-full">Most popular</span>}
+      </span>
       <span className={`flex-shrink-0 size-6 ${multi ? "rounded-md" : "rounded-full"} border relative ${
         selected ? "bg-[#14213D] border-[#14213D]" : "border-[#E3E6EC]"
       }`}>
@@ -305,17 +308,18 @@ export function Visualizer() {
     </button>
   );
 
-  const SegButton = ({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) => (
+  const SegButton = ({ selected, onClick, children, popular = false }: { selected: boolean; onClick: () => void; children: React.ReactNode; popular?: boolean }) => (
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 min-h-[60px] rounded-xl border text-base font-medium transition-all ${
+      className={`relative flex-1 min-h-[60px] rounded-xl border text-base font-medium transition-all ${
         selected
           ? "border-2 border-[#14213D] text-[#14213D]"
           : "border-[#E3E6EC] text-[#0F1420] hover:border-[#C5C9D2]"
       }`}
     >
       {children}
+      {popular && <span className="block text-[10px] font-semibold uppercase tracking-wide text-[#D4A017] mt-0.5">Most popular</span>}
     </button>
   );
 
@@ -519,21 +523,21 @@ export function Visualizer() {
             <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">How many stories?</p>
             <div className="flex gap-2 mb-3">
               <SegButton selected={stories === "1"} onClick={() => setStories("1")}>1</SegButton>
-              <SegButton selected={stories === "2"} onClick={() => setStories("2")}>2</SegButton>
+              <SegButton selected={stories === "2"} onClick={() => setStories("2")} popular>2</SegButton>
               <SegButton selected={stories === "3"} onClick={() => setStories("3")}>3+</SegButton>
             </div>
 
             {/* Gables */}
             <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Roofline peaks and gables</p>
             <OptionButton selected={gables === "simple"} onClick={() => setGables("simple")}>Simple (1&ndash;2)</OptionButton>
-            <OptionButton selected={gables === "average"} onClick={() => setGables("average")}>Average (3&ndash;4)</OptionButton>
+            <OptionButton selected={gables === "average"} onClick={() => setGables("average")} popular>Average (3&ndash;4)</OptionButton>
             <OptionButton selected={gables === "complex"} onClick={() => setGables("complex")}>Complex (5+)</OptionButton>
             <OptionButton selected={gables === "unsure"} onClick={() => setGables("unsure")}>Not sure</OptionButton>
 
             {/* Garage */}
             <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Attached garage?</p>
             <div className="flex gap-2 mb-3">
-              <SegButton selected={garage === "yes"} onClick={() => setGarage("yes")}>Yes</SegButton>
+              <SegButton selected={garage === "yes"} onClick={() => setGarage("yes")} popular>Yes</SegButton>
               <SegButton selected={garage === "no"} onClick={() => setGarage("no")}>No</SegButton>
               <SegButton selected={garage === "detached"} onClick={() => setGarage("detached")}>Detached</SegButton>
             </div>
@@ -541,7 +545,7 @@ export function Visualizer() {
             {/* Coverage */}
             <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Where should the lights run?</p>
             <OptionButton selected={coverage === "front"} onClick={() => setCoverage("front")}>Front only</OptionButton>
-            <OptionButton selected={coverage === "front-sides"} onClick={() => setCoverage("front-sides")}>Front &amp; sides</OptionButton>
+            <OptionButton selected={coverage === "front-sides"} onClick={() => setCoverage("front-sides")} popular>Front &amp; sides</OptionButton>
             <OptionButton selected={coverage === "full"} onClick={() => setCoverage("full")}>Full perimeter</OptionButton>
 
             {/* Extras */}
@@ -553,7 +557,7 @@ export function Visualizer() {
             {/* Timeline */}
             <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Timeline</p>
             <OptionButton selected={timeline === "asap"} onClick={() => setTimeline("asap")}>ASAP</OptionButton>
-            <OptionButton selected={timeline === "holidays"} onClick={() => setTimeline("holidays")}>Before the holidays</OptionButton>
+            <OptionButton selected={timeline === "holidays"} onClick={() => setTimeline("holidays")} popular>Before the holidays</OptionButton>
             <OptionButton selected={timeline === "spring"} onClick={() => setTimeline("spring")}>Next spring</OptionButton>
             <OptionButton selected={timeline === "exploring"} onClick={() => setTimeline("exploring")}>Just exploring</OptionButton>
 
