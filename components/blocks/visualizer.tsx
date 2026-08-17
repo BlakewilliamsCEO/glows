@@ -173,6 +173,16 @@ export function Visualizer() {
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
+    // Fire Meta Lead conversion event
+    if (typeof window !== "undefined" && typeof window.fbq === "function") {
+      window.fbq("track", "Lead", {
+        content_name: `Visualizer - ${selectedScene}`,
+        content_category: "permanent_lighting",
+        value: 0,
+        currency: "USD",
+      });
+    }
+
     try {
       await fetch("/api/quote", {
         method: "POST",
