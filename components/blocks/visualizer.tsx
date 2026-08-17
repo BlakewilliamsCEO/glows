@@ -1,20 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Lock, Check } from "lucide-react";
+import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { Button } from "@/components/ui/button";
-import { GlowText } from "@/components/ui/glow-text";
-import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import { SCENES } from "@/lib/scenes";
 import { calculateEstimate, type Estimate } from "@/lib/pricing";
 
 type Step = "address" | "preview" | "scene" | "gate" | "reveal";
 
-const GOOGLE_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
+const STEPS: Step[] = ["address", "preview", "scene", "gate", "reveal"];
 
-const f =
-  "h-10 w-full rounded-md border border-white/15 bg-white/[0.04] px-3 text-sm text-brand-cream placeholder:text-brand-cream/35 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25";
+const GOOGLE_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
 
 const STATUS_TICKERS = [
   "Reading your roofline\u2026",
@@ -50,18 +46,26 @@ const EXTRAS_OPTIONS = [
   { value: "pool-deck", label: "Pool deck" },
 ];
 
+const SCENE_GRADIENTS: Record<string, string> = {
+  "warm-white": "linear-gradient(160deg, #F5E6C8, #E8C87A)",
+  christmas: "linear-gradient(160deg, #1B4332, #C1121F)",
+  halloween: "linear-gradient(160deg, #2B2118, #E07A1F)",
+  gameday: "linear-gradient(160deg, #14213D, #3A5BA0)",
+};
+
 export function Visualizer() {
   const [step, setStep] = useState<Step>("address");
   const [address, setAddress] = useState("");
   const [streetViewUrl, setStreetViewUrl] = useState("");
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedScene, setSelectedScene] = useState(SCENES[0].id);
+  const [selectedScene, setSelectedScene] = useState<string | null>(null);
   const [renderedImage, setRenderedImage] = useState<string | null>(null);
   const [renderReady, setRenderReady] = useState(false);
   const [error, setError] = useState("");
   const [fullScreen, setFullScreen] = useState(false);
   const [tickerIndex, setTickerIndex] = useState(0);
   const [estimate, setEstimate] = useState<Estimate | null>(null);
+  const [stickySmall, setStickySmall] = useState(false);
 
   // Gate form state
   const [stories, setStories] = useState("");
@@ -79,6 +83,10 @@ export function Visualizer() {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const ioRef = useRef<IntersectionObserver | null>(null);
+
+  const stepIndex = STEPS.indexOf(step);
 
   // ---------- Google Places ----------
   useEffect(() => {
@@ -160,6 +168,18 @@ export function Visualizer() {
     return () => clearInterval(interval);
   }, [step, renderReady]);
 
+  // Sticky collapse observer for gate step
+  useEffect(() => {
+    if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; }
+    if (step !== "gate" || !sentinelRef.current) return;
+    ioRef.current = new IntersectionObserver(
+      (entries) => setStickySmall(!entries[0].isIntersecting),
+      { threshold: 0, rootMargin: "-100px 0px 0px 0px" }
+    );
+    ioRef.current.observe(sentinelRef.current);
+    return () => { ioRef.current?.disconnect(); };
+  }, [step]);
+
   // ---------- Gate form submit -> reveal ----------
   const handleGateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,7 +188,6 @@ export function Visualizer() {
     const est = calculateEstimate({ stories, coverage, gables, garage });
     setEstimate(est);
 
-    // Fire lead capture to /api/quote
     const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
@@ -214,7 +233,6 @@ export function Visualizer() {
       /* non-blocking */
     }
 
-    // If render is ready, reveal immediately. Otherwise wait.
     if (renderReady) setStep("reveal");
   };
 
@@ -230,7 +248,7 @@ export function Visualizer() {
   const reset = () => {
     setStep("address"); setAddress(""); setStreetViewUrl(""); setUploadedImage(null);
     setRenderedImage(null); setRenderReady(false); setError(""); setFullScreen(false);
-    setFormSubmitted(false); setEstimate(null); setSelectedScene(SCENES[0].id);
+    setFormSubmitted(false); setEstimate(null); setSelectedScene(null);
     setStories(""); setCoverage(""); setGables(""); setGarage(""); setExtras([]); setTimeline("");
     setFullName(""); setEmail(""); setPhone(""); setSmsConsent(false);
   };
@@ -247,10 +265,12 @@ export function Visualizer() {
     setExtras((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]);
   };
 
-  // ---------- Full-screen ----------
+  const selectedSceneObj = SCENES.find((s) => s.id === selectedScene) ?? SCENES[0];
+
+  // ---------- Full-screen overlay ----------
   if (step === "reveal" && renderedImage && fullScreen) {
     return (
-      <div className="fixed inset-0 z-50">
+      <div className="fixed inset-0 z-50 bg-black">
         <img src={renderedImage} alt="Your home with permanent lighting" className="h-full w-full object-cover" />
         <button type="button" onClick={() => setFullScreen(false)} className="absolute top-6 right-6 flex items-center gap-2 rounded-lg bg-black/40 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-black/60">
           <Minimize2 className="size-4" /> Back
@@ -259,360 +279,410 @@ export function Visualizer() {
     );
   }
 
-  const selectedSceneObj = SCENES.find((s) => s.id === selectedScene) ?? SCENES[0];
-
-  const radioBtn = (name: string, value: string, label: string, selected: string, setter: (v: string) => void) => (
-    <label key={value} className="flex-1 cursor-pointer">
-      <input type="radio" name={name} value={value} checked={selected === value} onChange={() => setter(value)} className="sr-only peer" />
-      <span className="block rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-center text-xs font-medium text-brand-cream/60 transition-all peer-checked:border-brand-gold peer-checked:bg-brand-gold/10 peer-checked:text-brand-gold hover:border-white/30">
-        {label}
+  // ---------- Shared UI helpers ----------
+  const OptionButton = ({ selected, onClick, children, multi = false }: { selected: boolean; onClick: () => void; children: React.ReactNode; multi?: boolean }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center justify-between min-h-[60px] px-5 mb-3 rounded-xl border text-left text-base font-medium transition-all ${
+        selected
+          ? "border-2 border-[#14213D] text-[#14213D]"
+          : "border-[#E3E6EC] text-[#0F1420] hover:border-[#C5C9D2]"
+      }`}
+    >
+      <span>{children}</span>
+      <span className={`flex-shrink-0 size-6 ${multi ? "rounded-md" : "rounded-full"} border relative ${
+        selected ? "bg-[#14213D] border-[#14213D]" : "border-[#E3E6EC]"
+      }`}>
+        {selected && (
+          <svg className="absolute left-[7px] top-[3px] size-[11px]" viewBox="0 0 11 11" fill="none">
+            <path d="M1 5.5L4 8.5L10 2" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
       </span>
-    </label>
+    </button>
+  );
+
+  const SegButton = ({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex-1 min-h-[60px] rounded-xl border text-base font-medium transition-all ${
+        selected
+          ? "border-2 border-[#14213D] text-[#14213D]"
+          : "border-[#E3E6EC] text-[#0F1420] hover:border-[#C5C9D2]"
+      }`}
+    >
+      {children}
+    </button>
   );
 
   return (
-    <div className="mx-auto max-w-[90rem] px-6">
+    <div className="px-5 pb-16 pt-5 max-w-[560px] mx-auto md:my-8 md:border md:border-[#E3E6EC] md:rounded-2xl md:px-10 md:py-10">
+
+      {/* Progress bar */}
+      <div className="flex gap-1 mb-6">
+        {STEPS.map((s, i) => (
+          <div key={s} className={`flex-1 h-[3px] rounded-full transition-colors ${i <= stepIndex ? "bg-[#14213D]" : "bg-[#E3E6EC]"}`} />
+        ))}
+      </div>
 
       {/* ======= STEP 1: ADDRESS ======= */}
       {step === "address" && (
-        <div className="mx-auto max-w-xl">
-          <div className="text-center">
-            <h1 className="text-brand-cream">
-              See your home{" "}
-              <span className="text-brand-gold"><GlowText>lit up</GlowText></span>{" "}
-              before you spend a dollar.
-            </h1>
-            <p className="mt-4 text-base text-brand-cream/50 lg:text-lg">
-              Enter your address and we&rsquo;ll show you what permanent lighting looks like on your actual house &mdash; not a stock photo.
-            </p>
-          </div>
+        <section>
+          <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
+            See your home lit up before you spend a dollar.
+          </h1>
+          <p className="text-base leading-relaxed text-[#6B7280] text-center mt-3">
+            Enter your address and we&rsquo;ll show you what permanent lighting looks like on your actual house.
+          </p>
 
-          <div className="mt-12 space-y-6">
+          <div className="mt-7">
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-brand-cream/30" />
-              <input ref={inputRef} type="text" placeholder="Start typing your address\u2026" className="h-14 w-full rounded-xl border border-white/15 bg-white/[0.04] pl-11 pr-4 text-base text-brand-cream placeholder:text-brand-cream/30 outline-none transition-colors focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/25" />
+              <MapPin className="absolute left-5 top-1/2 size-[18px] -translate-y-1/2 text-[#9CA3AF]" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Start typing your address\u2026"
+                className="w-full h-[60px] pl-12 pr-5 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2"
+              />
             </div>
-
-            <div className="flex items-center gap-4">
-              <div className="h-px flex-1 bg-white/10" />
-              <span className="text-xs text-brand-cream/25 uppercase tracking-widest">or</span>
-              <div className="h-px flex-1 bg-white/10" />
-            </div>
-
-            <button type="button" onClick={() => fileInputRef.current?.click()} className="flex w-full items-center justify-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.02] px-6 py-8 text-brand-cream/40 transition-colors hover:border-brand-gold/40 hover:text-brand-cream/60">
-              <Upload className="size-5" />
-              <span className="text-sm font-medium">Upload a photo of your home</span>
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-
-            <p className="text-center text-xs text-brand-cream/30">
-              Serving Carmel, Fishers, Westfield, Noblesville, and Zionsville.
-            </p>
-
-            {error && <p className="text-sm text-red-400">{error}</p>}
           </div>
-        </div>
+
+          <button
+            type="button"
+            onClick={() => setStep("preview")}
+            className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40"
+          >
+            Continue
+          </button>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
+          >
+            Upload a photo of your home
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+
+          <p className="text-center text-[13px] text-[#6B7280] mt-6 leading-relaxed">
+            Serving Carmel, Fishers, Westfield, Noblesville, and Zionsville.
+          </p>
+
+          {error && <p className="text-sm text-red-500 mt-4">{error}</p>}
+        </section>
       )}
 
       {/* ======= STEP 2: CONFIRM HOME ======= */}
       {step === "preview" && (
-        <div className="mx-auto max-w-2xl space-y-6">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-brand-cream">Is this your home?</h2>
-            <p className="mt-1 text-sm text-brand-cream/40">We&rsquo;ll use this view to build your preview.</p>
-          </div>
+        <section>
+          <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
+            Is this your home?
+          </h1>
+          <p className="text-base text-[#6B7280] text-center mt-3">
+            We&rsquo;ll use this view to build your preview.
+          </p>
 
-          <BorderRotate animationSpeed={6} borderWidth={3} borderRadius={16} backgroundColor="#141C2F" gradientColors={{ primary: "#584827", secondary: "#E7B969", accent: "#f9de90" }} className="w-full">
-            <div className="overflow-hidden rounded-[13px]">
-              <img src={uploadedImage || streetViewUrl} alt="Your home" className="w-full" />
+          <div className="mt-7">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-[#9AA7B8] to-[#5C6B80]">
+              {(uploadedImage || streetViewUrl) ? (
+                <img src={uploadedImage || streetViewUrl} alt="Your home" className="w-full h-full object-cover" />
+              ) : (
+                <div className="flex items-center justify-center h-full text-white text-sm">Street View</div>
+              )}
             </div>
-          </BorderRotate>
-
-          {address && <p className="text-center text-sm text-brand-cream/40">{address}</p>}
-
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Button onClick={() => setStep("scene")} size="lg">
-              Yes, that&rsquo;s it <ArrowRight className="ml-2 size-4" />
-            </Button>
-            <button type="button" onClick={() => { fileInputRef.current?.click(); }} className="text-sm text-brand-cream/40 underline underline-offset-4 transition-colors hover:text-brand-cream/60">
-              Not my home &mdash; upload a photo instead
-            </button>
           </div>
+
+          {address && <p className="text-center text-sm text-[#6B7280] mt-3">{address}</p>}
+
+          <button
+            type="button"
+            onClick={() => setStep("scene")}
+            className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold"
+          >
+            Yes, that&rsquo;s it
+          </button>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
+          >
+            Not my home &mdash; upload a photo instead
+          </button>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
 
-          {error && <p className="text-center text-sm text-red-400">{error}</p>}
-        </div>
+          {error && <p className="text-center text-sm text-red-500 mt-4">{error}</p>}
+        </section>
       )}
 
       {/* ======= STEP 3: SCENE SELECTION ======= */}
       {step === "scene" && (
-        <div className="mx-auto max-w-3xl space-y-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-brand-cream">Pick a scene.</h2>
-            <p className="mt-1 text-sm text-brand-cream/40">Your lights do all of these. Start with whichever one you want to see first.</p>
-          </div>
+        <section>
+          <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
+            Pick a scene.
+          </h1>
+          <p className="text-base text-[#6B7280] text-center mt-3">
+            One set of lights. Every scene below. Pick the one you want to see first.
+          </p>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 mt-7">
             {SCENES.map((scene) => (
               <button
                 key={scene.id}
                 type="button"
                 onClick={() => setSelectedScene(scene.id)}
-                className={`group relative rounded-xl border p-5 text-left transition-all ${
-                  selectedScene === scene.id
-                    ? "border-brand-gold bg-brand-gold/10"
-                    : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                className={`rounded-xl overflow-hidden border-2 transition-all text-left ${
+                  selectedScene === scene.id ? "border-[#14213D]" : "border-[#E3E6EC]"
                 }`}
               >
-                {selectedScene === scene.id && (
-                  <div className="absolute top-3 right-3 flex size-5 items-center justify-center rounded-full bg-brand-gold">
-                    <Check className="size-3 text-[#141C2F]" />
-                  </div>
-                )}
-                <span className="text-2xl">{scene.emoji}</span>
-                <h3 className="mt-3 text-sm font-semibold text-brand-cream">{scene.name}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-brand-cream/40">{scene.description}</p>
+                <span
+                  className="block aspect-[4/3]"
+                  style={{ background: SCENE_GRADIENTS[scene.id] || "#ccc" }}
+                />
+                <span className="block bg-[#14213D] text-white text-sm font-medium py-3 px-2 text-center">
+                  {scene.name}
+                </span>
               </button>
             ))}
           </div>
 
-          <p className="text-center text-xs text-brand-cream/30">
-            Every scene above runs on the same lights. You install once, then change it from your phone.
+          <p className="text-[15px] leading-relaxed text-[#6B7280] text-center mt-4 min-h-[45px]">
+            {selectedScene ? selectedSceneObj.description : "Tap a scene to see it described."}
           </p>
 
-          <div className="flex justify-center">
-            <Button onClick={handleSceneConfirm} size="lg">
-              Render my home <ArrowRight className="ml-2 size-4" />
-            </Button>
-          </div>
-        </div>
+          <button
+            type="button"
+            onClick={handleSceneConfirm}
+            disabled={!selectedScene}
+            className="w-full h-14 mt-6 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Render my home
+          </button>
+
+          <p className="text-center text-[13px] text-[#6B7280] mt-6 leading-relaxed">
+            Every scene above runs on the same lights. You install once, then change it from your phone.
+          </p>
+        </section>
       )}
 
-      {/* ======= STEP 4: GATE (RENDER + FORM) ======= */}
+      {/* ======= STEP 4: GATE (STICKY PREVIEW + FORM) ======= */}
       {step === "gate" && (
-        <div className="mx-auto max-w-4xl">
-          <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+        <section>
+          <div ref={sentinelRef} className="h-px" />
 
-            {/* Left: locked render preview */}
-            <div className="lg:w-1/2">
-              <div className="overflow-hidden rounded-xl border border-white/10">
-                {renderedImage ? (
-                  <div className="relative">
-                    <img src={renderedImage} alt="Preview" className="w-full blur-xl brightness-75" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                      <Lock className="size-8 text-brand-gold" />
-                      <p className="text-sm font-medium text-brand-cream">Your preview is ready</p>
-                      <p className="text-xs text-brand-cream/40">Complete the form to unlock</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex aspect-[3/2] flex-col items-center justify-center gap-4 bg-white/[0.02]">
-                    <Loader2 className="size-8 animate-spin text-brand-gold" />
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={tickerIndex}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        className="text-sm text-brand-cream/60"
-                      >
-                        {STATUS_TICKERS[tickerIndex]}
-                      </motion.p>
-                    </AnimatePresence>
-                  </div>
-                )}
+          {/* Sticky collapsing preview */}
+          <div className={`sticky top-0 z-10 bg-white mx-[-20px] px-5 pb-3 md:mx-[-40px] md:px-10 transition-all`}>
+            <div
+              className={`relative rounded-xl overflow-hidden transition-[height] duration-200 ease-out ${
+                stickySmall ? "h-14" : "h-[180px]"
+              }`}
+            >
+              <div className={`absolute inset-0 ${renderReady ? "bg-gradient-to-br from-[#2A3448] to-[#14213D]" : "bg-gradient-to-br from-[#8C99AB] to-[#39445C] blur-[3px]"}`} />
+              <div className={`absolute left-3 right-3 text-center text-white text-sm transition-all duration-200 ${stickySmall ? "bottom-[19px]" : "bottom-4"}`} style={{ textShadow: "0 1px 4px rgba(0,0,0,.7)" }}>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={renderReady ? "ready" : tickerIndex}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                  >
+                    {renderReady ? "Your preview is ready \u2014 finish to unlock" : STATUS_TICKERS[tickerIndex]}
+                  </motion.span>
+                </AnimatePresence>
               </div>
-
-              {formSubmitted && !renderReady && (
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-brand-cream/60">
-                  <Loader2 className="size-4 animate-spin text-brand-gold" />
-                  Finishing up&hellip;
-                </div>
-              )}
-            </div>
-
-            {/* Right: install prefs + contact form */}
-            <div className="lg:w-1/2">
-              <h2 className="text-xl font-semibold text-brand-cream">A few details about your home.</h2>
-              <p className="mt-1 text-sm text-brand-cream/40">These change the price, so it&rsquo;s worth 30 seconds.</p>
-
-              <form onSubmit={handleGateSubmit} className="mt-6 space-y-4">
-                {/* Stories */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">How many stories?</p>
-                  <div className="flex gap-2">
-                    {radioBtn("stories", "1", "1", stories, setStories)}
-                    {radioBtn("stories", "2", "2", stories, setStories)}
-                    {radioBtn("stories", "3", "3+", stories, setStories)}
-                  </div>
-                </div>
-
-                {/* Gables */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">Roofline peaks and gables</p>
-                  <div className="flex gap-2">
-                    {radioBtn("gables", "simple", "Simple (1-2)", gables, setGables)}
-                    {radioBtn("gables", "average", "Average (3-4)", gables, setGables)}
-                    {radioBtn("gables", "complex", "Complex (5+)", gables, setGables)}
-                    {radioBtn("gables", "unsure", "Not sure", gables, setGables)}
-                  </div>
-                </div>
-
-                {/* Garage */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">Attached garage?</p>
-                  <div className="flex gap-2">
-                    {radioBtn("garage", "yes", "Yes", garage, setGarage)}
-                    {radioBtn("garage", "no", "No", garage, setGarage)}
-                    {radioBtn("garage", "detached", "Detached", garage, setGarage)}
-                  </div>
-                </div>
-
-                {/* Coverage */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">Where should the lights run?</p>
-                  <div className="flex gap-2">
-                    {radioBtn("coverage", "front", "Front only", coverage, setCoverage)}
-                    {radioBtn("coverage", "front-sides", "Front & sides", coverage, setCoverage)}
-                    {radioBtn("coverage", "full", "Full perimeter", coverage, setCoverage)}
-                  </div>
-                </div>
-
-                {/* Extras */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">Anything else to light? <span className="text-brand-cream/25">(optional)</span></p>
-                  <div className="flex flex-wrap gap-2">
-                    {EXTRAS_OPTIONS.map((opt) => (
-                      <label key={opt.value} className="cursor-pointer">
-                        <input type="checkbox" checked={extras.includes(opt.value)} onChange={() => toggleExtra(opt.value)} className="sr-only peer" />
-                        <span className="block rounded-md border border-white/15 bg-white/[0.04] px-3 py-2 text-center text-xs font-medium text-brand-cream/60 transition-all peer-checked:border-brand-gold peer-checked:bg-brand-gold/10 peer-checked:text-brand-gold hover:border-white/30">
-                          {opt.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Timeline */}
-                <div>
-                  <p className="mb-2 text-xs font-medium text-brand-cream/40">Timeline</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {radioBtn("timeline", "asap", "ASAP", timeline, setTimeline)}
-                    {radioBtn("timeline", "holidays", "Before the holidays", timeline, setTimeline)}
-                    {radioBtn("timeline", "spring", "Next spring", timeline, setTimeline)}
-                    {radioBtn("timeline", "exploring", "Just exploring", timeline, setTimeline)}
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-white/10 pt-4" />
-
-                {/* Contact */}
-                <input name="fullName" required placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className={f} />
-                <input name="email" type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={f} />
-                <input name="phone" type="tel" required placeholder="Phone" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} className={f} />
-
-                {/* SMS consent */}
-                <label className="flex cursor-pointer items-start gap-2.5 text-xs text-brand-cream/50">
-                  <input type="checkbox" checked={smsConsent} onChange={(e) => setSmsConsent(e.target.checked)} className="mt-0.5 size-3.5 rounded border-white/25 bg-transparent accent-brand-gold" />
-                  <span>By checking this box, you agree to receive recurring automated promotional and personalized marketing text messages from Glow&rsquo;s Lighting Services at the phone number provided. Consent is not a condition of purchase. Msg &amp; data rates may apply. Reply STOP to cancel.</span>
-                </label>
-
-                {error && <p className="text-sm text-red-400">{error}</p>}
-
-                <Button type="submit" size="lg" className="w-full" disabled={!stories || !coverage || !gables || !garage || !fullName || !email || !phone}>
-                  Unlock my preview <ArrowRight className="ml-2 size-4" />
-                </Button>
-
-                <p className="text-[0.6rem] leading-relaxed text-brand-cream/25">
-                  By submitting you authorize Glow&rsquo;s Lighting Services to contact you by phone, email, or text. We don&rsquo;t sell your information.
-                </p>
-              </form>
             </div>
           </div>
-        </div>
+
+          <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] mt-5 md:text-[32px] md:leading-[1.2]">
+            A few details about your home.
+          </h1>
+          <p className="text-base text-[#6B7280] text-center mt-3">
+            These change the price, so it&rsquo;s worth 30 seconds.
+          </p>
+
+          <form onSubmit={handleGateSubmit} className="mt-6">
+            {/* Stories */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">How many stories?</p>
+            <div className="flex gap-2 mb-3">
+              <SegButton selected={stories === "1"} onClick={() => setStories("1")}>1</SegButton>
+              <SegButton selected={stories === "2"} onClick={() => setStories("2")}>2</SegButton>
+              <SegButton selected={stories === "3"} onClick={() => setStories("3")}>3+</SegButton>
+            </div>
+
+            {/* Gables */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Roofline peaks and gables</p>
+            <OptionButton selected={gables === "simple"} onClick={() => setGables("simple")}>Simple (1&ndash;2)</OptionButton>
+            <OptionButton selected={gables === "average"} onClick={() => setGables("average")}>Average (3&ndash;4)</OptionButton>
+            <OptionButton selected={gables === "complex"} onClick={() => setGables("complex")}>Complex (5+)</OptionButton>
+            <OptionButton selected={gables === "unsure"} onClick={() => setGables("unsure")}>Not sure</OptionButton>
+
+            {/* Garage */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Attached garage?</p>
+            <div className="flex gap-2 mb-3">
+              <SegButton selected={garage === "yes"} onClick={() => setGarage("yes")}>Yes</SegButton>
+              <SegButton selected={garage === "no"} onClick={() => setGarage("no")}>No</SegButton>
+              <SegButton selected={garage === "detached"} onClick={() => setGarage("detached")}>Detached</SegButton>
+            </div>
+
+            {/* Coverage */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Where should the lights run?</p>
+            <OptionButton selected={coverage === "front"} onClick={() => setCoverage("front")}>Front only</OptionButton>
+            <OptionButton selected={coverage === "front-sides"} onClick={() => setCoverage("front-sides")}>Front &amp; sides</OptionButton>
+            <OptionButton selected={coverage === "full"} onClick={() => setCoverage("full")}>Full perimeter</OptionButton>
+
+            {/* Extras */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Anything else to light? <span className="font-normal text-[#6B7280]">(optional, pick any)</span></p>
+            {EXTRAS_OPTIONS.map((opt) => (
+              <OptionButton key={opt.value} selected={extras.includes(opt.value)} onClick={() => toggleExtra(opt.value)} multi>{opt.label}</OptionButton>
+            ))}
+
+            {/* Timeline */}
+            <p className="text-base font-medium text-[#0F1420] mb-3 mt-6">Timeline</p>
+            <OptionButton selected={timeline === "asap"} onClick={() => setTimeline("asap")}>ASAP</OptionButton>
+            <OptionButton selected={timeline === "holidays"} onClick={() => setTimeline("holidays")}>Before the holidays</OptionButton>
+            <OptionButton selected={timeline === "spring"} onClick={() => setTimeline("spring")}>Next spring</OptionButton>
+            <OptionButton selected={timeline === "exploring"} onClick={() => setTimeline("exploring")}>Just exploring</OptionButton>
+
+            {/* Contact */}
+            <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280] font-medium mt-7 mb-3">Where to send it</p>
+            <input name="fullName" required placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+            <input name="email" type="email" inputMode="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+            <input name="phone" type="tel" inputMode="tel" required placeholder="Phone" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+
+            {/* SMS consent */}
+            <OptionButton selected={smsConsent} onClick={() => setSmsConsent(!smsConsent)} multi>Text me my preview</OptionButton>
+            <p className="text-xs leading-relaxed text-[#6B7280] -mt-1 mb-3">
+              By checking this box, you agree to receive recurring automated promotional and personalized marketing text messages from Glow&rsquo;s Permanent Lighting at the phone number provided. Consent is not a condition of purchase. Msg &amp; data rates may apply. Reply STOP to cancel.
+            </p>
+
+            {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+
+            {formSubmitted && !renderReady && (
+              <div className="flex items-center justify-center gap-2 text-sm text-[#6B7280] my-4">
+                <Loader2 className="size-4 animate-spin text-[#D4A017]" />
+                Finishing up&hellip;
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={!stories || !coverage || !gables || !garage || !fullName || !email || !phone}
+              className="w-full h-14 mt-6 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Unlock my preview
+            </button>
+
+            <p className="text-center text-[13px] text-[#6B7280] mt-4 leading-relaxed">
+              By submitting you authorize Glow&rsquo;s Permanent Lighting to contact you by phone, email, or text. We don&rsquo;t sell your information.
+            </p>
+          </form>
+        </section>
       )}
 
       {/* ======= STEP 5: REVEAL + PRICING ======= */}
       {step === "reveal" && renderedImage && estimate && (
-        <div className="space-y-12">
-          {/* Render reveal */}
-          <div className="mx-auto max-w-4xl">
-            <BorderRotate animationSpeed={6} borderWidth={3} borderRadius={16} backgroundColor="#141C2F" gradientColors={{ primary: "#584827", secondary: "#E7B969", accent: "#f9de90" }} className="w-full">
-              <div className="overflow-hidden rounded-[13px]">
-                <motion.img initial={{ filter: "blur(20px)", opacity: 0 }} animate={{ filter: "blur(0px)", opacity: 1 }} transition={{ duration: 1.5, ease: "easeOut" }} src={renderedImage} alt="Your home with permanent lighting" className="w-full" />
-              </div>
-            </BorderRotate>
-
-            <div className="mt-4 flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => setFullScreen(true)}>
-                <Maximize2 className="mr-1 size-3.5" /> Full screen
-              </Button>
+        <section>
+          {/* Rendered image with gold sheen border */}
+          <div className="rounded-2xl p-[3px] bg-[length:200%_100%] animate-[sheen_3s_linear_infinite]" style={{ backgroundImage: "linear-gradient(90deg, #D4A017, #F5E6C8, #D4A017)" }}>
+            <div className="aspect-[4/3] rounded-[13px] overflow-hidden bg-gradient-to-br from-[#1A2438] to-[#3E5378]">
+              <motion.img
+                initial={{ filter: "blur(20px)", opacity: 0 }}
+                animate={{ filter: "blur(0px)", opacity: 1 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                src={renderedImage}
+                alt="Your home with permanent lighting"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
+          <div className="mt-3 flex justify-end">
+            <button type="button" onClick={() => setFullScreen(true)} className="flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#0F1420]">
+              <Maximize2 className="size-3.5" /> Full screen
+            </button>
+          </div>
+
           {/* Pricing */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.5 }} className="mx-auto max-w-3xl">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold text-brand-cream">Your estimate</h3>
-              <p className="mt-1 text-sm text-brand-cream/50">
-                Or as low as {formatCurrency(estimate.monthlyLow)}/mo with 0% financing.
-              </p>
-            </div>
-
-            <div className="mt-8 grid grid-cols-3 gap-4">
-              {[
-                { label: "Low", monthly: estimate.monthlyLow, total: estimate.low, highlight: false },
-                { label: "Estimate", monthly: estimate.monthlyMid, total: estimate.mid, highlight: true },
-                { label: "High", monthly: estimate.monthlyHigh, total: estimate.high, highlight: false },
-              ].map(({ label, monthly, total, highlight }) => (
-                <div key={label} className={`rounded-xl border p-6 text-center ${highlight ? "border-brand-gold/30 bg-brand-gold/[0.06]" : "border-white/10 bg-white/[0.03]"}`}>
-                  <p className="text-xs text-brand-cream/40 uppercase tracking-wider">{label}</p>
-                  <p className={`mt-2 font-display text-3xl font-semibold lg:text-4xl ${highlight ? "text-brand-gold" : "text-brand-cream"}`}>
-                    {formatCurrency(monthly)}<span className="text-lg text-brand-cream/40">/mo</span>
-                  </p>
-                  <p className="mt-1 text-sm text-brand-cream/30">{formatCurrency(total)} total</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-4 text-center text-xs text-brand-cream/30">
-              Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.5 }}>
+            <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] mt-6 md:text-[32px] md:leading-[1.2]">
+              Your estimate
+            </h1>
+            <p className="text-base text-[#6B7280] text-center mt-3">
+              Or as low as {formatCurrency(estimate.monthlyLow)}/mo with 0% financing.
             </p>
 
-            <p className="mt-2 text-center text-xs text-brand-cream/30">
+            <div className="mt-6 space-y-3">
+              {/* Low */}
+              <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
+                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">Low</p>
+                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                  {formatCurrency(estimate.monthlyLow)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                </p>
+                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.low)} total</p>
+              </div>
+
+              {/* Mid (featured) */}
+              <div className="rounded-xl border-2 border-[#14213D] p-5 text-center relative mt-5">
+                <span className="absolute -top-[10px] left-1/2 -translate-x-1/2 bg-[#14213D] text-white text-xs px-3 py-1 rounded-full">Most homes</span>
+                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">Estimate</p>
+                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                  {formatCurrency(estimate.monthlyMid)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                </p>
+                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.mid)} total</p>
+              </div>
+
+              {/* High */}
+              <div className="rounded-xl border border-[#E3E6EC] p-5 text-center">
+                <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280]">High</p>
+                <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
+                  {formatCurrency(estimate.monthlyHigh)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
+                </p>
+                <p className="text-[15px] text-[#6B7280] tabular">{formatCurrency(estimate.high)} total</p>
+              </div>
+            </div>
+
+            <p className="text-[13px] text-[#6B7280] leading-relaxed mt-4">
+              Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
+              <br /><br />
               Based on approximately {estimate.linearFeet} ft of roofline, {stories} {Number(stories) === 1 ? "story" : "stories"}, {COVERAGE_LABELS[coverage] || coverage}.
             </p>
 
-            <p className="mt-2 text-center text-sm text-brand-cream/50 italic">
-              {selectedSceneObj.name} &mdash; {selectedSceneObj.description}
-            </p>
-
             {/* Accuracy block */}
-            <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-6">
-              <h4 className="font-semibold text-brand-cream">This is an estimate. The real number comes from your driveway.</h4>
-              <p className="mt-2 text-sm text-brand-cream/50">
+            <div className="bg-[#F6F7F9] rounded-xl p-5 mt-6">
+              <h2 className="text-[17px] font-semibold text-[#0F1420] leading-snug">
+                This is an estimate. The real number comes from your driveway.
+              </h2>
+              <p className="text-[15px] leading-relaxed text-[#6B7280] mt-2.5">
                 Rooflines hide things satellites can&rsquo;t see &mdash; soffit depth, fascia condition, where power actually runs. A 20-minute walkthrough gets you an exact price.
               </p>
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-brand-cream/70">
-                <div className="flex items-center gap-2"><Check className="size-4 text-brand-gold" /> Exact pricing</div>
-                <div className="flex items-center gap-2"><Check className="size-4 text-brand-gold" /> Flexible financing</div>
-                <div className="flex items-center gap-2"><Check className="size-4 text-brand-gold" /> We&rsquo;ll show you the app</div>
-                <div className="flex items-center gap-2"><Check className="size-4 text-brand-gold" /> Free, no obligation</div>
+              <div className="mt-3 space-y-3">
+                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Exact pricing</span></div>
+                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Flexible financing</span></div>
+                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>We&rsquo;ll show you the app</span></div>
+                <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span>Free, no obligation</span></div>
               </div>
             </div>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col items-center gap-4">
-              <Button size="lg" className="px-12">
-                Book your free measure <ArrowRight className="ml-2 size-4" />
-              </Button>
-              <button type="button" onClick={tryAnotherScene} className="text-sm text-brand-cream/40 underline underline-offset-4 transition-colors hover:text-brand-cream/60">
-                Try another scene
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={reset}
+              className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold"
+            >
+              Book your free measure
+            </button>
+
+            <button
+              type="button"
+              onClick={tryAnotherScene}
+              className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
+            >
+              Try another scene
+            </button>
           </motion.div>
-        </div>
+        </section>
       )}
     </div>
   );

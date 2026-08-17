@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/blocks/site-header";
-import { SiteFooter } from "@/components/blocks/site-footer";
 import { Visualizer } from "@/components/blocks/visualizer";
 
 export const metadata: Metadata = {
@@ -11,14 +9,10 @@ export const metadata: Metadata = {
 
 export default function VisualizerPage() {
   return (
-    <div className="dark bg-[#141C2F] min-h-screen">
-      <SiteHeader filled />
-
-      <main className="pt-24 pb-20">
+    <div className="bg-white min-h-screen">
+      <main>
         <Visualizer />
       </main>
-
-      <SiteFooter />
     </div>
   );
 }
