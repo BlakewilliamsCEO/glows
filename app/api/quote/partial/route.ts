@@ -3,7 +3,15 @@ import { query } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, phone, attribution, fbc, fbp } = await req.json();
+    const { email, phone, attribution, fbc, fbp, socialHandle } = await req.json();
+
+    // If socialHandle is provided, update the existing prospect record
+    if (socialHandle && email) {
+      await query(
+        `UPDATE prospects SET notes = COALESCE(notes, '') || $1 WHERE email = $2`,
+        [`\nSocial: ${socialHandle}`, email],
+      ).catch(() => {});
+    }
 
     await query(
       `INSERT INTO prospect_partials (

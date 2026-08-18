@@ -70,6 +70,8 @@ export function Visualizer() {
   const [stickySmall, setStickySmall] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [socialHandle, setSocialHandle] = useState("");
+  const [socialSubmitted, setSocialSubmitted] = useState(false);
 
   // Gate form state
   const [stories, setStories] = useState("");
@@ -726,6 +728,59 @@ export function Visualizer() {
                   }}
                   style={{ width: "100%", height: "100%", overflow: "auto" }}
                 />
+              </div>
+
+              {/* Social capture */}
+              <div className="mt-10 rounded-xl border border-[#E3E6EC] p-5">
+                <h2 className="text-[18px] font-bold text-[#0F1420] text-center leading-snug">
+                  Want an AI video of your home&rsquo;s lighting makeover?
+                </h2>
+                <p className="text-[14px] text-[#6B7280] text-center mt-2 leading-relaxed">
+                  Drop your Instagram or Facebook handle and we&rsquo;ll send you a shareable video &mdash; and tag you when we post it.
+                </p>
+
+                {!socialSubmitted ? (
+                  <div className="mt-4">
+                    <input
+                      type="text"
+                      placeholder="@yourhandle or profile URL"
+                      value={socialHandle}
+                      onChange={(e) => setSocialHandle(e.target.value)}
+                      className="w-full h-[52px] px-5 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2"
+                    />
+                    <button
+                      type="button"
+                      disabled={!socialHandle.trim()}
+                      onClick={() => {
+                        setSocialSubmitted(true);
+                        fetch("/api/quote/partial", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ email, phone, socialHandle: socialHandle.trim(), attribution: {} }),
+                          keepalive: true,
+                        }).catch(() => {});
+                      }}
+                      className="w-full h-12 mt-3 rounded-xl bg-[#14213D] text-white text-[15px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Send me the video
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-4 flex items-center justify-center gap-2 text-[15px] text-[#0F1420]">
+                    <Check className="size-5 text-[#D4A017]" />
+                    <span className="font-medium">We&rsquo;ll send it over soon!</span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center gap-6 mt-5">
+                  <a href="https://www.instagram.com/getglowslights/" target="_blank" rel="noopener noreferrer" className="text-[14px] font-medium text-[#6B7280] hover:text-[#0F1420] transition-colors">
+                    Follow us on Instagram
+                  </a>
+                  <span className="text-[#E3E6EC]">|</span>
+                  <a href="https://www.facebook.com/getglowslights/" target="_blank" rel="noopener noreferrer" className="text-[14px] font-medium text-[#6B7280] hover:text-[#0F1420] transition-colors">
+                    Follow us on Facebook
+                  </a>
+                </div>
               </div>
 
               <button
