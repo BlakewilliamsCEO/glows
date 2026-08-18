@@ -45,10 +45,10 @@ export function NavBar({
   return (
     <div className="sticky top-0 z-50 border-b border-[#E3E6EC] bg-white/90 backdrop-blur-md">
 
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-6 lg:h-24">
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center px-6 lg:h-24">
 
-        {/* Nav links + centered logo */}
-        <div className="hidden flex-1 items-center justify-center gap-10 lg:flex">
+        {/* Nav links + centered logo — absolutely centered on page */}
+        <div className="hidden lg:flex absolute inset-0 items-center justify-center gap-10">
           {leftNav.map((item) => (
             <Link
               key={item.href}
@@ -91,7 +91,7 @@ export function NavBar({
         </Link>
 
         {/* CTA — far right */}
-        <div className="hidden lg:block ml-auto">
+        <div className="hidden lg:block ml-auto relative z-10">
           <Link href={site.ctaHref} tabIndex={-1}>
             <SmokyButton>{site.cta}</SmokyButton>
           </Link>
