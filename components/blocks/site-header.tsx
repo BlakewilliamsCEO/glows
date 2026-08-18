@@ -24,7 +24,7 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header>
+    <header className="sticky top-0 z-50">
       <NavBar open={open} setOpen={setOpen} />
       <MobileSheet open={open} setOpen={setOpen} />
     </header>
