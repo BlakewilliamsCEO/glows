@@ -733,10 +733,10 @@ export function Visualizer() {
               {/* Social capture */}
               <div className="mt-10 rounded-xl border border-[#E3E6EC] p-5">
                 <h2 className="text-[18px] font-bold text-[#0F1420] text-center leading-snug">
-                  Want an AI video of your home&rsquo;s lighting makeover?
+                  We&rsquo;re making an AI video of your home&rsquo;s lighting makeover.
                 </h2>
                 <p className="text-[14px] text-[#6B7280] text-center mt-2 leading-relaxed">
-                  Drop your Instagram or Facebook handle and we&rsquo;ll send you a shareable video &mdash; and tag you when we post it.
+                  Drop your handle here and we&rsquo;ll send you the video we post in a DM.
                 </p>
 
                 {!socialSubmitted ? (
