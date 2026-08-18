@@ -641,10 +641,13 @@ export function Visualizer() {
 
               {/* Pricing */}
               <h1 className="text-[28px] leading-[1.25] font-bold text-center text-[#0F1420] mt-8 md:text-[32px] md:leading-[1.2]">
-                Your Estimate
+                Your exact home for as low as
               </h1>
-              <p className="text-base text-[#6B7280] text-center mt-3">
-                Or as low as {formatCurrency(estimate.monthlyLow)}/mo with 0% financing.
+              <p className="text-[28px] font-bold text-[#D4A017] text-center mt-2 tabular">
+                {formatCurrency(estimate.monthlyLow)}/mo
+              </p>
+              <p className="text-base text-[#6B7280] text-center mt-1">
+                with 0% financing.
               </p>
 
               <div className="mt-6 space-y-3">
