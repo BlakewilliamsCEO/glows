@@ -790,13 +790,6 @@ export function Visualizer() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={tryAnotherScene}
-                className="block w-full text-center text-[15px] text-[#6B7280] mt-6 cursor-pointer"
-              >
-                Try another scene
-              </button>
             </motion.div>
           )}
         </section>
