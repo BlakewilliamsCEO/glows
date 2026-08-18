@@ -555,9 +555,9 @@ export function Visualizer() {
 
             {/* Contact */}
             <p className="text-[13px] uppercase tracking-[0.08em] text-[#6B7280] font-medium mt-7 mb-3">Where to send it</p>
-            <input name="fullName" required placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
-            <input name="email" type="email" inputMode="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
-            <input name="phone" type="tel" inputMode="tel" required placeholder="Phone" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+            <input name="name" autoComplete="name" required placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+            <input name="email" type="email" autoComplete="email" inputMode="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
+            <input name="phone" type="tel" autoComplete="tel" inputMode="tel" required placeholder="Phone" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} className="w-full h-[60px] px-5 mb-3 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2" />
 
             {/* SMS consent */}
             <OptionButton selected={smsConsent} onClick={() => setSmsConsent(!smsConsent)} multi>Text me my preview</OptionButton>
