@@ -31,7 +31,7 @@ export function ServiceArea() {
   const counties = [...new Set(cities.map((c) => c.county))];
 
   return (
-    <section className="dark bg-[#141C2F] py-20 lg:py-28">
+    <section id="service-areas" className="dark bg-[#141C2F] py-20 lg:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="reveal grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16">
           {/* ---------- copy + map ---------- */}

@@ -302,7 +302,7 @@ export const getCity = (slug: string) => cities.find((c) => c.slug === slug);
 export const nav = [
   { label: "Solutions", href: "/solutions" },
   { label: "Gallery", href: "/gallery" },
-  { label: "Service Area", href: "/service-area" },
+  { label: "Service Areas", href: "/#service-areas" },
   { label: "About", href: "/about" },
 ] as const;
 
