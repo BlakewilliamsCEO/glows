@@ -45,10 +45,10 @@ export function NavBar({
   return (
     <div className="sticky top-0 z-50 border-b border-[#E3E6EC] bg-white/90 backdrop-blur-md">
 
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:h-20">
+      <div className="mx-auto flex h-16 max-w-7xl items-center px-6 lg:h-24">
 
-        {/* Left nav links */}
-        <nav className="hidden flex-1 items-center gap-8 lg:flex">
+        {/* Nav links + centered logo */}
+        <div className="hidden flex-1 items-center justify-center gap-10 lg:flex">
           {leftNav.map((item) => (
             <Link
               key={item.href}
@@ -58,20 +58,17 @@ export function NavBar({
               {item.label}
             </Link>
           ))}
-        </nav>
 
-        {/* Center logo */}
-        <Link href="/" className="group flex flex-col items-center justify-center leading-none lg:mx-8">
-          <span className="font-display text-5xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-6xl text-center">
-            Glows<span className="text-[#D4A017] not-italic">.</span>
-          </span>
-          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.18em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60 text-center">
-            Permanent Lighting
-          </span>
-        </Link>
+          {/* Center logo */}
+          <Link href="/" className="group flex flex-col items-center justify-center leading-none mx-8">
+            <span className="font-display text-5xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-6xl text-center">
+              Glows<span className="text-[#D4A017] not-italic">.</span>
+            </span>
+            <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.18em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60 text-center">
+              Permanent Lighting
+            </span>
+          </Link>
 
-        {/* Right nav links + CTA */}
-        <div className="hidden flex-1 items-center justify-end gap-8 lg:flex">
           {rightNav.map((item) => (
             <Link
               key={item.href}
@@ -81,6 +78,20 @@ export function NavBar({
               {item.label}
             </Link>
           ))}
+        </div>
+
+        {/* Mobile: logo left */}
+        <Link href="/" className="group flex flex-col items-center leading-none lg:hidden">
+          <span className="font-display text-3xl font-bold italic tracking-tight text-[#14213D]">
+            Glows<span className="text-[#D4A017] not-italic">.</span>
+          </span>
+          <span className="text-[0.4rem] font-sans font-medium uppercase tracking-[0.18em] text-[#6B7280]">
+            Permanent Lighting
+          </span>
+        </Link>
+
+        {/* CTA — far right */}
+        <div className="hidden lg:block ml-auto">
           <Link href={site.ctaHref} tabIndex={-1}>
             <SmokyButton>{site.cta}</SmokyButton>
           </Link>
