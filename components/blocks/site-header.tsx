@@ -55,7 +55,7 @@ export function NavBar({
   return (
     <div
       className={cn(
-        "sticky top-0 z-50 border-b border-white/10 bg-[#141C2F]/90 backdrop-blur-md",
+        "sticky top-0 z-50 border-b border-[#E3E6EC] bg-white/90 backdrop-blur-md",
         filled && "fixed inset-x-0 top-0",
       )}
     >
@@ -67,7 +67,7 @@ export function NavBar({
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-brand-cream/80 transition-colors hover:text-brand-gold"
+              className="text-sm font-medium text-[#14213D]/70 transition-colors hover:text-[#D4A017]"
             >
               {item.label}
             </Link>
@@ -76,10 +76,10 @@ export function NavBar({
 
         {/* Center logo */}
         <Link href="/" className="group flex flex-col items-center leading-none lg:mx-8">
-          <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream transition-colors group-hover:text-brand-cream lg:text-3xl">
-            Glows<span className="text-brand-gold not-italic">.</span>
+          <span className="font-display text-4xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-5xl">
+            Glows<span className="text-[#D4A017] not-italic">.</span>
           </span>
-          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40 transition-colors group-hover:text-brand-gold/60">
+          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60">
             Permanent Lighting
           </span>
         </Link>
@@ -90,7 +90,7 @@ export function NavBar({
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-brand-cream/80 transition-colors hover:text-brand-gold"
+              className="text-sm font-medium text-[#14213D]/70 transition-colors hover:text-[#D4A017]"
             >
               {item.label}
             </Link>
@@ -105,7 +105,7 @@ export function NavBar({
           <a
             href={site.phoneHref}
             aria-label={`Call ${site.phone}`}
-            className="flex size-10 items-center justify-center rounded-md border border-white/15 text-brand-cream transition-colors hover:border-brand-gold hover:text-brand-gold"
+            className="flex size-10 items-center justify-center rounded-md border border-[#E3E6EC] text-[#14213D] transition-colors hover:border-[#D4A017] hover:text-[#D4A017]"
           >
             <Phone className="size-4" aria-hidden />
           </a>
@@ -114,7 +114,7 @@ export function NavBar({
             onClick={() => setOpen(true)}
             aria-label="Open menu"
             aria-expanded={open}
-            className="flex size-10 items-center justify-center rounded-md text-brand-cream transition-colors hover:text-brand-gold"
+            className="flex size-10 items-center justify-center rounded-md text-[#14213D] transition-colors hover:text-[#D4A017]"
           >
             <Menu className="size-5" aria-hidden />
           </button>
