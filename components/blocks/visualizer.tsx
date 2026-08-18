@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Cal, { getCalApi } from "@calcom/embed-react";
+import confetti from "canvas-confetti";
 import { SCENES } from "@/lib/scenes";
 import { calculateEstimate, type Estimate } from "@/lib/pricing";
 
@@ -247,6 +248,18 @@ export function Visualizer() {
       setStep("reveal");
     }
   }, [formSubmitted, renderReady, step, stories, coverage, gables, garage]);
+
+  // Fire confetti when reveal step loads
+  useEffect(() => {
+    if (step !== "reveal") return;
+    const end = Date.now() + 1500;
+    const frame = () => {
+      confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ["#D4A017", "#F5E6C8", "#14213D", "#E7B969"] });
+      confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: ["#D4A017", "#F5E6C8", "#14213D", "#E7B969"] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    };
+    frame();
+  }, [step]);
 
   const reset = () => {
     setStep("address"); setAddress(""); setStreetViewUrl(""); setUploadedImage(null);
