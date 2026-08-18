@@ -600,6 +600,10 @@ export function Visualizer() {
       {/* ======= STEP 5: REVEAL + PRICING ======= */}
       {step === "reveal" && renderedImage && estimate && (
         <section>
+          <h1 className="text-[28px] leading-[1.25] font-bold text-center text-[#0F1420] mb-6 md:text-[32px] md:leading-[1.2]">
+            Let&rsquo;s build something amazing together.
+          </h1>
+
           {/* Rendered image with gold sheen border */}
           <div className="rounded-2xl p-[3px] bg-[length:200%_100%] animate-[sheen_3s_linear_infinite]" style={{ backgroundImage: "linear-gradient(90deg, #D4A017, #F5E6C8, #D4A017)" }}>
             <div className="aspect-[4/3] rounded-[13px] overflow-hidden bg-gradient-to-br from-[#1A2438] to-[#3E5378]">
