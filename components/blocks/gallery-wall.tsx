@@ -121,7 +121,7 @@ export function GalleryWall() {
     <section className="px-4 py-16 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center mb-12">
         <h1 className="text-[36px] font-bold text-[#0F1420] md:text-[48px] leading-tight">
-          Real homes. Real neighborhoods.
+          AI Renders. Real Homes. Your Neighborhoods.
         </h1>
         <p className="text-base text-[#6B7280] mt-3 max-w-lg mx-auto">
           Every home below is in your area. One install, every scene, controlled from your phone.
