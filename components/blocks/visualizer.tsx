@@ -362,7 +362,7 @@ export function Visualizer() {
       {/* ======= STEP 1: ADDRESS ======= */}
       {step === "address" && (
         <section>
-          <h1 className="text-[28px] leading-[1.25] font-semibold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
+          <h1 className="text-[28px] leading-[1.25] font-extrabold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
             See your home lit up before you spend a dollar.
           </h1>
           <p className="text-base leading-relaxed text-[#6B7280] text-center mt-3">
