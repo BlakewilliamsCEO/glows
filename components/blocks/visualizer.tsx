@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown } from "lucide-react";
+import { MapPin, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Cal, { getCalApi } from "@calcom/embed-react";
 import confetti from "canvas-confetti";
@@ -576,7 +576,7 @@ export function Visualizer() {
 
             {/* Urgency banner */}
             <div className="flex items-center gap-2.5 mt-6 px-4 py-3 rounded-xl bg-[#D4A017]/10 border border-[#D4A017]/20">
-              <span className="flex-shrink-0 size-2 rounded-full bg-[#D4A017] animate-pulse" />
+              <Zap className="flex-shrink-0 size-4 text-[#D4A017] fill-[#D4A017]" />
               <p className="text-[14px] text-[#0F1420]">
                 <strong>{(() => { const d = new Date(); return 30 + ((d.getDay() + d.getDate()) % 11); })()}</strong> homeowners booked installs in {(() => { const parts = address.split(",").map(s => s.trim()); if (parts.length >= 3) { return parts[1]; } return "your area"; })()} this week.
               </p>
