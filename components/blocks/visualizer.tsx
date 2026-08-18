@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check, Calendar } from "lucide-react";
+import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { SCENES } from "@/lib/scenes";
@@ -68,6 +68,7 @@ export function Visualizer() {
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [stickySmall, setStickySmall] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   // Gate form state
   const [stories, setStories] = useState("");
@@ -673,33 +674,46 @@ export function Visualizer() {
                 </div>
               </div>
 
-              <p className="text-[13px] text-[#6B7280] leading-relaxed mt-4">
-                Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
-                <br /><br />
-                Based on approximately {estimate.linearFeet} ft of roofline, {stories} {Number(stories) === 1 ? "story" : "stories"}, {COVERAGE_LABELS[coverage] || coverage}.
-              </p>
+              {/* Collapsible terms & details */}
+              <button
+                type="button"
+                onClick={() => setShowTerms(!showTerms)}
+                className="flex w-full items-center justify-center gap-2 mt-4 py-3 text-[14px] font-medium text-[#6B7280] hover:text-[#0F1420] transition-colors"
+              >
+                See terms &amp; conditions
+                <ChevronDown className={`size-4 transition-transform ${showTerms ? "rotate-180" : ""}`} />
+              </button>
 
-              {/* Accuracy block */}
-              <div className="bg-[#F6F7F9] rounded-xl p-5 mt-6">
-                <h2 className="text-[18px] font-bold text-[#0F1420] leading-snug">
-                  This is an estimate. The real number comes from your driveway.
-                </h2>
-                <p className="text-[15px] leading-relaxed text-[#6B7280] mt-2.5">
-                  Rooflines hide things satellites can&rsquo;t see &mdash; soffit depth, fascia condition, where power actually runs. A 20-minute walkthrough gets you an exact price.
-                </p>
-                <div className="mt-3 space-y-3">
-                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Exact pricing</strong></span></div>
-                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Flexible financing</strong></span></div>
-                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>We&rsquo;ll show you the app</strong></span></div>
-                  <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Free, no obligation</strong></span></div>
-                </div>
-              </div>
+              {showTerms && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} transition={{ duration: 0.3 }}>
+                  <p className="text-[13px] text-[#6B7280] leading-relaxed">
+                    Payments shown at {estimate.financingTerm} months, 0% APR through Enhancify. Subject to credit approval.
+                    <br /><br />
+                    Based on approximately {estimate.linearFeet} ft of roofline, {stories} {Number(stories) === 1 ? "story" : "stories"}, {COVERAGE_LABELS[coverage] || coverage}.
+                  </p>
 
-              {/* Inline Cal.com booking — always visible */}
+                  <div className="bg-[#F6F7F9] rounded-xl p-5 mt-4">
+                    <h2 className="text-[18px] font-bold text-[#0F1420] leading-snug">
+                      This is an estimate. The real number comes from your driveway.
+                    </h2>
+                    <p className="text-[15px] leading-relaxed text-[#6B7280] mt-2.5">
+                      Rooflines hide things satellites can&rsquo;t see &mdash; soffit depth, fascia condition, where power actually runs. A 20-minute walkthrough gets you an exact price.
+                    </p>
+                    <div className="mt-3 space-y-3">
+                      <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Exact pricing</strong></span></div>
+                      <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Flexible financing</strong></span></div>
+                      <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>We&rsquo;ll show you the app</strong></span></div>
+                      <div className="flex items-start gap-3 text-[15px]"><span className="text-[#D4A017] font-bold">&#10003;</span><span><strong>Free, no obligation</strong></span></div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Design consult booking */}
               <div className="mt-10">
-                <h2 className="text-[24px] font-bold text-[#0F1420] text-center leading-snug md:text-[28px]">
-                  Pick a day &amp; time for your design consult.
-                </h2>
+                <h1 className="text-[28px] leading-[1.25] font-bold text-center text-[#0F1420] md:text-[32px] md:leading-[1.2]">
+                  Set Up Your Design Consult
+                </h1>
                 <p className="text-base text-[#6B7280] text-center mt-2 mb-6">
                   30 minutes, free, no obligation.
                 </p>
