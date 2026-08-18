@@ -75,11 +75,11 @@ export function NavBar({
         </nav>
 
         {/* Center logo */}
-        <Link href="/" className="group flex flex-col items-center leading-none lg:mx-8">
-          <span className="font-display text-5xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-6xl">
+        <Link href="/" className="group flex flex-col items-center justify-center leading-none lg:mx-8">
+          <span className="font-display text-5xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-6xl text-center">
             Glows<span className="text-[#D4A017] not-italic">.</span>
           </span>
-          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60">
+          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.18em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60 text-center">
             Permanent Lighting
           </span>
         </Link>
@@ -134,11 +134,11 @@ function MobileSheet({ open, setOpen }: { open: boolean; setOpen: (v: boolean) =
       aria-hidden={!open}
     >
       <div className="flex h-16 items-center justify-between px-6">
-        <span className="flex flex-col items-center leading-none">
-          <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream">
+        <span className="flex flex-col items-center justify-center leading-none">
+          <span className="font-display text-2xl font-semibold italic tracking-tight text-brand-cream text-center">
             Glows<span className="text-brand-gold not-italic">.</span>
           </span>
-          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-brand-cream/40">
+          <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.18em] text-brand-cream/40 text-center">
             Permanent Lighting
           </span>
         </span>
