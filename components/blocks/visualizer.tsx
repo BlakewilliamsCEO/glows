@@ -659,7 +659,7 @@ export function Visualizer() {
 
                 {/* Mid (featured) */}
                 <div className="rounded-xl border-2 border-[#14213D] p-5 text-center relative mt-5">
-                  <span className="absolute -top-[10px] left-1/2 -translate-x-1/2 bg-[#14213D] text-white text-xs font-bold px-3 py-1 rounded-full">Most homes</span>
+                  <span className="absolute -top-[10px] left-1/2 -translate-x-1/2 bg-[#14213D] text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">Most popular in {(() => { const parts = address.split(",").map(s => s.trim()); return parts.length >= 3 ? parts[1] : "your area"; })()}</span>
                   <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-[#6B7280]">Estimate</p>
                   <p className="text-[32px] font-semibold text-[#0F1420] mt-1.5 tabular">
                     {formatCurrency(estimate.monthlyMid)}<span className="text-base font-normal text-[#6B7280]">/mo</span>
