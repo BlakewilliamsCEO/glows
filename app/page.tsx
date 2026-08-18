@@ -15,9 +15,9 @@ export default function HomePage() {
       <SiteHeader />
       <main>
         <HeroSceneSwitcher />
+        <DesignerPromo />
         <BrandStatement />
         <SolutionsGrid />
-        <DesignerPromo />
         <AppAndControl />
         <SpecBlock />
         <ServiceArea />

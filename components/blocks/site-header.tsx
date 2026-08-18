@@ -76,7 +76,7 @@ export function NavBar({
 
         {/* Center logo */}
         <Link href="/" className="group flex flex-col items-center leading-none lg:mx-8">
-          <span className="font-display text-4xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-5xl">
+          <span className="font-display text-5xl font-bold italic tracking-tight text-[#14213D] transition-colors lg:text-6xl">
             Glows<span className="text-[#D4A017] not-italic">.</span>
           </span>
           <span className="text-[0.5rem] font-sans font-medium uppercase tracking-[0.28em] text-[#6B7280] transition-colors group-hover:text-[#D4A017]/60">
