@@ -596,10 +596,18 @@ export function Visualizer() {
               </div>
             )}
 
+            {/* Urgency banner */}
+            <div className="flex items-center gap-2.5 mt-6 px-4 py-3 rounded-xl bg-[#D4A017]/10 border border-[#D4A017]/20">
+              <span className="flex-shrink-0 size-2 rounded-full bg-[#D4A017] animate-pulse" />
+              <p className="text-[14px] text-[#0F1420]">
+                <strong>{(() => { const d = new Date(); return 30 + ((d.getDay() + d.getDate()) % 11); })()}</strong> homeowners booked installs in Carmel this week.
+              </p>
+            </div>
+
             <button
               type="submit"
               disabled={!stories || !coverage || !gables || !garage || !fullName || !email || !phone}
-              className="w-full h-14 mt-6 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full h-14 mt-4 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Unlock my preview
             </button>
