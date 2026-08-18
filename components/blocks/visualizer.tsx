@@ -359,7 +359,7 @@ export function Visualizer() {
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Start typing your address\u2026"
+                placeholder="Start typing your address..."
                 className="w-full h-[60px] pl-12 pr-5 rounded-xl border border-[#E3E6EC] text-base text-[#0F1420] placeholder:text-[#9CA3AF] outline-none focus:outline-2 focus:outline-[#14213D] focus:-outline-offset-2"
               />
             </div>
