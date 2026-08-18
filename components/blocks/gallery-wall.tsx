@@ -77,8 +77,8 @@ function GalleryCard({ item, index, isHero }: { item: GalleryItem; index: number
         </div>
 
         {/* City name — bottom right */}
-        <span className={`absolute bottom-5 right-5 font-semibold tracking-wide transition-colors duration-500 ${
-          isHero ? "text-base" : "text-sm"
+        <span className={`absolute bottom-5 right-5 font-display font-semibold italic tracking-tight transition-colors duration-500 ${
+          isHero ? "text-2xl lg:text-3xl" : "text-lg"
         } ${isElevated ? "text-[#D4A017]" : "text-white"}`}>
           {item.city}
         </span>
