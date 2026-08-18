@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { site, systemStats } from "@/lib/config";
 import { CountUp } from "@/components/ui/count-up";
 import { GlowText } from "@/components/ui/glow-text";
 import { SmokyButton } from "@/components/ui/smoky-button";
-import { NavBar } from "@/components/blocks/site-header";
 
 /** "800+" → { value: 800, suffix: "+" } · "16M+" → { value: 16, suffix: "M+" } */
 function parseStat(raw: string): { value: number; suffix: string } {
@@ -17,11 +15,9 @@ function parseStat(raw: string): { value: number; suffix: string } {
 }
 
 export function HeroSceneSwitcher() {
-  const [navOpen, setNavOpen] = useState(false);
-
   return (
     <>
-      <section className="dark relative isolate flex h-[calc(100dvh-5rem)] w-full flex-col">
+      <section className="dark relative isolate flex h-dvh w-full flex-col">
         {/* ---------- background video ---------- */}
         <div className="absolute inset-0 -z-10">
           <video
@@ -83,10 +79,6 @@ export function HeroSceneSwitcher() {
         </div>
       </section>
 
-      {/* Nav outside the hero so sticky works against the page scroll container */}
-      <div className="dark">
-        <NavBar open={navOpen} setOpen={setNavOpen} />
-      </div>
     </>
   );
 }

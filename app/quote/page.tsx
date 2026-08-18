@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function QuotePage() {
   return (
     <div className="dark bg-[#141C2F]">
-      <SiteHeader filled />
+      <SiteHeader />
 
       <div className="flex min-h-screen">
         {/* ---------- sticky video — left half ---------- */}

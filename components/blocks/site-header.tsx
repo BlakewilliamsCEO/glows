@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * On hero pages: sits at the bottom of the hero, sticks on scroll.
  * On other pages (filled=true): fixed at top.
  */
-export function SiteHeader({ filled = false }: { filled?: boolean }) {
+export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -23,17 +23,9 @@ export function SiteHeader({ filled = false }: { filled?: boolean }) {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
-  if (filled) {
-    return (
-      <header className="dark">
-        <NavBar filled open={open} setOpen={setOpen} />
-        <MobileSheet open={open} setOpen={setOpen} />
-      </header>
-    );
-  }
-
   return (
-    <header className="dark">
+    <header>
+      <NavBar open={open} setOpen={setOpen} />
       <MobileSheet open={open} setOpen={setOpen} />
     </header>
   );
@@ -44,21 +36,15 @@ const leftNav = nav.slice(0, Math.ceil(nav.length / 2));
 const rightNav = nav.slice(Math.ceil(nav.length / 2));
 
 export function NavBar({
-  filled = false,
   open,
   setOpen,
 }: {
-  filled?: boolean;
   open: boolean;
   setOpen: (v: boolean) => void;
 }) {
   return (
-    <div
-      className={cn(
-        "sticky top-0 z-50 border-b border-[#E3E6EC] bg-white/90 backdrop-blur-md",
-        filled && "fixed inset-x-0 top-0",
-      )}
-    >
+    <div className="sticky top-0 z-50 border-b border-[#E3E6EC] bg-white/90 backdrop-blur-md">
+
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:h-20">
 
         {/* Left nav links */}
