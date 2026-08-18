@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MapPin, Upload, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown } from "lucide-react";
+import { MapPin, Loader2, ArrowRight, Maximize2, Minimize2, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Cal, { getCalApi } from "@calcom/embed-react";
 import confetti from "canvas-confetti";
@@ -379,21 +379,6 @@ export function Visualizer() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setStep("preview")}
-            className="w-full h-14 mt-8 rounded-xl bg-[#14213D] text-white text-[17px] font-semibold disabled:opacity-40"
-          >
-            Continue
-          </button>
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
-          >
-            Upload a photo of your home
-          </button>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
 
           <p className="text-center text-[13px] text-[#6B7280] mt-6 leading-relaxed">
@@ -433,15 +418,6 @@ export function Visualizer() {
           >
             Yes, that&rsquo;s it
           </button>
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="block w-full text-center text-[15px] text-[#6B7280] mt-4 cursor-pointer"
-          >
-            Not my home &mdash; upload a photo instead
-          </button>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
 
           {error && <p className="text-center text-sm text-red-500 mt-4">{error}</p>}
         </section>
