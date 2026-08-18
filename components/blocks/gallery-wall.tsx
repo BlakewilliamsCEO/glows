@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "motion/react";
 import { GALLERY_ITEMS, type GalleryItem } from "@/lib/gallery";
 
 function GalleryCard({ item, index, className = "" }: { item: GalleryItem; index: number; className?: string }) {
-  const [view, setView] = useState<"elevated" | "before">("elevated");
-  const isElevated = view === "elevated";
   const isLarge = className.includes("col-span");
 
   return (
@@ -18,51 +15,19 @@ function GalleryCard({ item, index, className = "" }: { item: GalleryItem; index
       className={`relative overflow-hidden rounded-2xl ${className}`}
     >
       <div className="relative overflow-hidden bg-[#1A2438] w-full h-full">
-        {(item.afterUrl && item.beforeUrl) ? (
-          <img
-            src={isElevated ? item.afterUrl : item.beforeUrl}
-            alt={`${item.address}, ${item.city} — ${isElevated ? "with Glows lighting" : "before"}`}
-            className="w-full h-full object-cover transition-opacity duration-500"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-[#14213D] to-[#2A3757] flex items-center justify-center">
-            <span className="text-white/20 text-sm font-medium">Coming soon</span>
-          </div>
-        )}
+        <img
+          src={item.afterUrl}
+          alt={`${item.address}, ${item.city} — with Glows lighting`}
+          className="w-full h-full object-cover"
+        />
 
         {/* Bottom gradient overlay */}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
 
-        {/* Before / Elevated buttons — bottom left */}
-        <div className="absolute bottom-4 left-4 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setView("before")}
-            className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all backdrop-blur-sm ${
-              !isElevated
-                ? "bg-white text-[#0F1420]"
-                : "bg-white/20 text-white/70 hover:bg-white/30 hover:text-white"
-            }`}
-          >
-            Before
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("elevated")}
-            className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all backdrop-blur-sm ${
-              isElevated
-                ? "bg-[#D4A017]/90 text-white"
-                : "bg-white/20 text-white/70 hover:bg-white/30 hover:text-white"
-            }`}
-          >
-            Elevated
-          </button>
-        </div>
-
         {/* City name — bottom right */}
-        <span className={`absolute bottom-5 right-5 font-display font-semibold italic tracking-tight transition-colors duration-500 ${
+        <span className={`absolute bottom-5 right-5 font-display font-semibold italic tracking-tight text-[#D4A017] ${
           isLarge ? "text-2xl lg:text-3xl" : "text-lg"
-        } ${isElevated ? "text-[#D4A017]" : "text-white"}`}>
+        }`}>
           {item.city}
         </span>
       </div>
@@ -70,12 +35,6 @@ function GalleryCard({ item, index, className = "" }: { item: GalleryItem; index
   );
 }
 
-/**
- * Manually lay out the grid in repeating 5-row sections.
- * Each section uses 7 images:
- *   Section A: big-left(2x2) + 2 stacked right, then row of 3
- *   Section B: row of 3, then 2 stacked left + big-right(2x2)
- */
 function buildSections(items: GalleryItem[]) {
   const sections: React.ReactNode[] = [];
   let i = 0;
@@ -85,13 +44,11 @@ function buildSections(items: GalleryItem[]) {
     const remaining = items.length - i;
 
     if (sectionType === "A" && remaining >= 5) {
-      // Big left + 2 stacked right (row of 2 tall)
-      // Then row of 3
+      const count = remaining >= 6 ? 6 : 5;
       sections.push(
         <div key={`section-${i}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Row 1-2: Big left + 2 stacked right */}
           <div className="lg:col-span-2 lg:row-span-2 aspect-[4/3] lg:aspect-auto">
-            <GalleryCard item={items[i]} index={i} className="h-full" />
+            <GalleryCard item={items[i]} index={i} className="h-full col-span-2" />
           </div>
           <div className="aspect-[4/3]">
             <GalleryCard item={items[i + 1]} index={i + 1} className="h-full" />
@@ -99,54 +56,50 @@ function buildSections(items: GalleryItem[]) {
           <div className="aspect-[4/3]">
             <GalleryCard item={items[i + 2]} index={i + 2} className="h-full" />
           </div>
-          {/* Row 3: 3 equal */}
           <div className="aspect-[4/3]">
             <GalleryCard item={items[i + 3]} index={i + 3} className="h-full" />
           </div>
           <div className="aspect-[4/3]">
             <GalleryCard item={items[i + 4]} index={i + 4} className="h-full" />
           </div>
-          {remaining >= 6 ? (
+          {count === 6 && (
             <div className="aspect-[4/3]">
               <GalleryCard item={items[i + 5]} index={i + 5} className="h-full" />
             </div>
-          ) : null}
+          )}
         </div>
       );
-      i += remaining >= 6 ? 6 : 5;
+      i += count;
       sectionType = "B";
     } else if (sectionType === "B" && remaining >= 5) {
-      // Row of 3, then 2 stacked left + big right
+      const count = remaining >= 6 ? 6 : 5;
       sections.push(
         <div key={`section-${i}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Row 1: 3 equal */}
-          {remaining >= 6 ? (
+          {count === 6 && (
             <div className="aspect-[4/3]">
               <GalleryCard item={items[i]} index={i} className="h-full" />
             </div>
-          ) : null}
+          )}
           <div className="aspect-[4/3]">
-            <GalleryCard item={items[remaining >= 6 ? i + 1 : i]} index={remaining >= 6 ? i + 1 : i} className="h-full" />
+            <GalleryCard item={items[count === 6 ? i + 1 : i]} index={count === 6 ? i + 1 : i} className="h-full" />
           </div>
           <div className="aspect-[4/3]">
-            <GalleryCard item={items[remaining >= 6 ? i + 2 : i + 1]} index={remaining >= 6 ? i + 2 : i + 1} className="h-full" />
+            <GalleryCard item={items[count === 6 ? i + 2 : i + 1]} index={count === 6 ? i + 2 : i + 1} className="h-full" />
           </div>
-          {/* Row 2-3: 2 stacked left + big right */}
           <div className="aspect-[4/3]">
-            <GalleryCard item={items[remaining >= 6 ? i + 3 : i + 2]} index={remaining >= 6 ? i + 3 : i + 2} className="h-full" />
+            <GalleryCard item={items[count === 6 ? i + 3 : i + 2]} index={count === 6 ? i + 3 : i + 2} className="h-full" />
           </div>
           <div className="lg:col-span-2 lg:row-span-2 aspect-[4/3] lg:aspect-auto">
-            <GalleryCard item={items[remaining >= 6 ? i + 4 : i + 3]} index={remaining >= 6 ? i + 4 : i + 3} className="h-full col-span-2" />
+            <GalleryCard item={items[count === 6 ? i + 4 : i + 3]} index={count === 6 ? i + 4 : i + 3} className="h-full col-span-2" />
           </div>
           <div className="aspect-[4/3]">
-            <GalleryCard item={items[remaining >= 6 ? i + 5 : i + 4]} index={remaining >= 6 ? i + 5 : i + 4} className="h-full" />
+            <GalleryCard item={items[count === 6 ? i + 5 : i + 4]} index={count === 6 ? i + 5 : i + 4} className="h-full" />
           </div>
         </div>
       );
-      i += remaining >= 6 ? 6 : 5;
+      i += count;
       sectionType = "A";
     } else {
-      // Remaining items — just fill as a standard row
       sections.push(
         <div key={`section-${i}`} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.slice(i).map((item, j) => (

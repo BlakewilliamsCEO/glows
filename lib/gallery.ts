@@ -117,26 +117,4 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     beforeUrl: "https://pub-2dc80e7c866c40e78cd9c276adc3fb09.r2.dev/sources/f864410a-86ac-4d86-976f-633487e03864.jpg",
     afterUrl: "https://pub-2dc80e7c866c40e78cd9c276adc3fb09.r2.dev/renders/7704ea5a-add3-42c1-809c-438f1418cfd4.png",
   },
-  // Placeholders — replace with real addresses
-  {
-    id: "placeholder-1",
-    city: "Fishers",
-    address: "Coming soon",
-    beforeUrl: "",
-    afterUrl: "",
-  },
-  {
-    id: "placeholder-2",
-    city: "Noblesville",
-    address: "Coming soon",
-    beforeUrl: "",
-    afterUrl: "",
-  },
-  {
-    id: "placeholder-3",
-    city: "Fishers",
-    address: "Coming soon",
-    beforeUrl: "",
-    afterUrl: "",
-  },
 ];
