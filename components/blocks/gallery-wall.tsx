@@ -4,7 +4,31 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { GALLERY_ITEMS, type GalleryItem } from "@/lib/gallery";
 
-function GalleryCard({ item, index }: { item: GalleryItem; index: number }) {
+/**
+ * Layout pattern (repeats every 7 items on desktop):
+ *
+ * Row 1-2:  [  BIG (2x2)  ] [ small ]
+ *                            [ small ]
+ * Row 3:    [ small ] [ small ] [ small ]
+ * Row 4-5:  [ small ] [  BIG (2x2)  ]
+ *           [ small ]
+ */
+
+// Grid placement classes for the repeating 7-item pattern
+const PATTERN: string[] = [
+  "lg:col-span-2 lg:row-span-2", // 0: big left
+  "",                              // 1: small top-right
+  "",                              // 2: small bottom-right
+  "",                              // 3: row of 3
+  "",                              // 4: row of 3
+  "",                              // 5: row of 3
+  "lg:col-span-2 lg:row-span-2 lg:col-start-2", // 6: big right
+];
+
+// Items at index 0 and 6 in each group are the hero images — no fixed aspect ratio
+const HERO_INDICES = new Set([0, 6]);
+
+function GalleryCard({ item, index, isHero }: { item: GalleryItem; index: number; isHero: boolean }) {
   const [view, setView] = useState<"elevated" | "before">("elevated");
   const isElevated = view === "elevated";
 
@@ -13,10 +37,10 @@ function GalleryCard({ item, index }: { item: GalleryItem; index: number }) {
       initial={{ opacity: 0, scale: 0.95, y: 30 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: (index % 3) * 0.15, ease: "easeOut" }}
-      className="relative overflow-hidden rounded-2xl group"
+      transition={{ duration: 0.6, delay: (index % 3) * 0.12, ease: "easeOut" }}
+      className="relative overflow-hidden rounded-2xl"
     >
-      <div className="aspect-[4/3] relative overflow-hidden bg-[#1A2438]">
+      <div className={`relative overflow-hidden bg-[#1A2438] ${isHero ? "aspect-auto h-full min-h-[300px]" : "aspect-[4/3]"}`}>
         <img
           src={isElevated ? item.afterUrl : item.beforeUrl}
           alt={`${item.address}, ${item.city} — ${isElevated ? "with Glows lighting" : "before"}`}
@@ -53,9 +77,9 @@ function GalleryCard({ item, index }: { item: GalleryItem; index: number }) {
         </div>
 
         {/* City name — bottom right */}
-        <span className={`absolute bottom-5 right-5 text-sm font-semibold tracking-wide transition-colors duration-500 ${
-          isElevated ? "text-[#D4A017]" : "text-white"
-        }`}>
+        <span className={`absolute bottom-5 right-5 font-semibold tracking-wide transition-colors duration-500 ${
+          isHero ? "text-base" : "text-sm"
+        } ${isElevated ? "text-[#D4A017]" : "text-white"}`}>
           {item.city}
         </span>
       </div>
@@ -75,10 +99,18 @@ export function GalleryWall() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {GALLERY_ITEMS.map((item, i) => (
-          <GalleryCard key={item.id} item={item} index={i} />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[minmax(200px,auto)]">
+        {GALLERY_ITEMS.map((item, i) => {
+          const patternIndex = i % 7;
+          const spanClass = PATTERN[patternIndex];
+          const isHero = HERO_INDICES.has(patternIndex);
+
+          return (
+            <div key={item.id} className={spanClass}>
+              <GalleryCard item={item} index={i} isHero={isHero} />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
